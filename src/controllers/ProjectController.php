@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 
-require_once __DIR__ . '/AppController.php';
-
+namespace App\Controller;
 final class ProjectController extends AppController
 {
     public function index(): void
