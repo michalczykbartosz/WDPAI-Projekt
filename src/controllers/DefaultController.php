@@ -20,7 +20,7 @@ final class DefaultController extends AppController
         ];
 
         $this->render('home', [
-            'pageTitle' => 'DartTournament – Platforma turniejów darta',
+            'pageTitle' => 'DartArena – Platforma turniejów darta',
             'upcomingTournaments' => $upcomingTournaments,
             'topPlayers' => $topPlayers,
         ]);
@@ -29,7 +29,7 @@ final class DefaultController extends AppController
     public function notFound(): void
     {
         $this->render('not-found', [
-            'pageTitle' => '404 – Nie znaleziono strony – DartTournament',
+            'pageTitle' => '404 – Nie znaleziono strony – DartArena',
             'suggestedLinks' => [
                 ['url' => '/', 'label' => 'Strona główna'],
                 ['url' => '/tournaments', 'label' => 'Turnieje'],

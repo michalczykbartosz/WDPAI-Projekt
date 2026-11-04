@@ -32,9 +32,9 @@
         <table>
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Zawodnik</th>
-                    <th>Średnia (3 lotki)</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Zawodnik</th>
+                    <th scope="col">Średnia (3 lotki)</th>
                 </tr>
             </thead>
             <tbody>

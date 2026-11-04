@@ -5,14 +5,14 @@
     <table>
         <thead>
             <tr>
-                <th>#</th>
-                <th>Zawodnik</th>
-                <th>Mecze</th>
-                <th>Wygrane</th>
-                <th>% wygranych</th>
-                <th>Średnia (3 lotki)</th>
-                <th>180-ki</th>
-                <th>Najlepszy checkout</th>
+                <th scope="col">#</th>
+                <th scope="col">Zawodnik</th>
+                <th scope="col">Mecze</th>
+                <th scope="col">Wygrane</th>
+                <th scope="col">% wygranych</th>
+                <th scope="col">Średnia (3 lotki)</th>
+                <th scope="col">180-ki</th>
+                <th scope="col">Najlepszy checkout</th>
             </tr>
         </thead>
         <tbody>
@@ -20,7 +20,7 @@
                 <tr>
                     <td class="rank-cell"><?= $p['rank'] ?></td>
                     <td>
-                        <a href="/players/<?= $p['rank'] ?>">
+                        <a href="/players/<?= (int) $p['id'] ?>">
                             <?= htmlspecialchars($p['name']) ?>
                         </a>
                     </td>

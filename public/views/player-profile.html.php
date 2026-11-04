@@ -67,13 +67,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>Data</th>
-                    <th>Turniej</th>
-                    <th>Przeciwnik</th>
-                    <th>Wynik</th>
-                    <th>Średnia</th>
-                    <th>180-ki</th>
-                    <th>Checkout</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Turniej</th>
+                    <th scope="col">Przeciwnik</th>
+                    <th scope="col">Wynik</th>
+                    <th scope="col">Średnia</th>
+                    <th scope="col">180-ki</th>
+                    <th scope="col">Checkout</th>
                 </tr>
             </thead>
             <tbody>

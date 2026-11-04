@@ -42,7 +42,7 @@ final class TournamentController extends AppController
         ];
 
         $this->render('tournaments', [
-            'pageTitle' => 'Turnieje – DartTournament',
+            'pageTitle' => 'Turnieje – DartArena',
             'activePage' => 'tournaments',
             'tournaments' => $tournaments,
         ]);
@@ -88,7 +88,7 @@ final class TournamentController extends AppController
         ];
 
         $this->render('tournament-detail', [
-            'pageTitle' => $tournament['name'] . ' – DartTournament',
+            'pageTitle' => $tournament['name'] . ' – DartArena',
             'activePage' => 'tournaments',
             'tournament' => $tournament,
             'players' => $players,
