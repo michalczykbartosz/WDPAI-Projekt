@@ -31,13 +31,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>Nazwa</th>
-                    <th>Format</th>
-                    <th>Data</th>
-                    <th>Lokalizacja</th>
-                    <th>Zapisy</th>
-                    <th>Status</th>
-                    <th>Akcja</th>
+                    <th scope="col">Nazwa</th>
+                    <th scope="col">Format</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Lokalizacja</th>
+                    <th scope="col">Zapisy</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Akcja</th>
                 </tr>
             </thead>
             <tbody>
