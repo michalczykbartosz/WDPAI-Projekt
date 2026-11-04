@@ -3,11 +3,18 @@
 declare(strict_types=1);
 
 use App\Controller\DefaultController;
+use App\Controller\LanguageController;
 use App\Controller\PlayerController;
 use App\Controller\TournamentController;
 use App\Routing;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+session_start([
+    'cookie_httponly' => true,
+    'cookie_samesite' => 'Lax',
+    'use_strict_mode' => true,
+]);
 
 $routing = new Routing();
 
@@ -22,6 +29,9 @@ $routing->get('/organizer/create', TournamentController::class, 'create');
 // Gracze – ranking globalny, profil z parametrem {id}
 $routing->get('/leaderboard', PlayerController::class, 'leaderboard');
 $routing->get('/players/{id}', PlayerController::class, 'profile');
+
+// Zmiana języka interfejsu (zapis w sesji)
+$routing->post('/language', LanguageController::class, 'change');
 
 $routeFound = $routing->dispatch(
     $_SERVER['REQUEST_METHOD'],

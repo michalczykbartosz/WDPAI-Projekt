@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\LocalePreference;
 use App\Service\Translator;
 
 abstract class AppController
@@ -21,13 +22,16 @@ abstract class AppController
 
     public function __construct()
     {
-        $this->translator = new Translator(Translator::DEFAULT_LOCALE, self::LANG_DIR);
+        $locale = (new LocalePreference())->current();
+        $this->translator = new Translator($locale, self::LANG_DIR);
     }
 
     protected function render(string $template, array $variables = []): void
     {
         $variables = array_merge(self::LAYOUT_DEFAULTS, $variables);
         $variables['locale'] = $this->translator->locale();
+        $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
+        $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();
         $variables['content'] = $this->renderTemplate($template, $variables);
 

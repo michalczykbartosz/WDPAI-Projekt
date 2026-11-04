@@ -276,6 +276,35 @@ main > .container > section {
     gap: var(--space-sm);
 }
 
+/* Przełącznik języka (selektor podwójnej klasy nadpisuje style button[type="submit"]) */
+.language-switcher {
+    display: flex;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.language-switcher .language-switcher__option {
+    margin: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    border-radius: 0;
+    font-size: var(--text-xs);
+}
+
+.language-switcher .language-switcher__option:hover {
+    background: var(--color-brand-subtle);
+    color: var(--color-brand);
+    box-shadow: none;
+    transform: none;
+}
+
+.language-switcher .language-switcher__option[aria-pressed="true"] {
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+}
+
 .theme-toggle {
     background: transparent;
     border: 1px solid var(--color-border);
