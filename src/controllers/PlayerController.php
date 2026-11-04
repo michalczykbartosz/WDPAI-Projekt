@@ -21,6 +21,7 @@ final class PlayerController extends AppController
 
         $this->render('leaderboard', [
             'pageTitle' => 'Ranking graczy – DartTournament',
+            'activePage' => 'leaderboard',
             'players' => $players,
         ]);
     }
