@@ -43,6 +43,7 @@ final class TournamentController extends AppController
 
         $this->render('tournaments', [
             'pageTitle' => 'Turnieje – DartTournament',
+            'activePage' => 'tournaments',
             'tournaments' => $tournaments,
         ]);
     }
@@ -88,6 +89,7 @@ final class TournamentController extends AppController
 
         $this->render('tournament-detail', [
             'pageTitle' => $tournament['name'] . ' – DartTournament',
+            'activePage' => 'tournaments',
             'tournament' => $tournament,
             'players' => $players,
             'bracket' => $bracket,
@@ -98,6 +100,8 @@ final class TournamentController extends AppController
     {
         $this->render('organizer-create', [
             'pageTitle' => 'Utwórz turniej – Panel Organizatora',
+            'activePage' => 'organizer',
+            'userRole' => 'organizer',
             'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
             'maxPlayersOptions' => [4, 8, 16],
         ]);
