@@ -21,5 +21,6 @@
     <?php require __DIR__ . '/partials/footer.html.php'; ?>
 
     <script src="/js/theme.js"></script>
+    <script src="/js/navigation.js"></script>
 </body>
 </html>
