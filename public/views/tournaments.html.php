@@ -1,28 +1,37 @@
-<h1>Eksplorator turniejów</h1>
+<?php
+$formatFilters = [
+    '501do' => '501 Double Out',
+    '301do' => '301 Double Out',
+    '501so' => '501 Single Out',
+];
+
+$statusFilters = ['open', 'ongoing', 'finished'];
+?>
+<h1><?= $t('tournaments.title') ?></h1>
 
 <section>
     <form method="get" action="/tournaments" class="filter-bar">
         <div>
-            <label for="format">Format:</label>
+            <label for="format"><?= $t('filter.format') ?></label>
             <select name="format" id="format">
-                <option value="">Wszystkie</option>
-                <option value="501do">501 Double Out</option>
-                <option value="301do">301 Double Out</option>
-                <option value="501so">501 Single Out</option>
+                <option value=""><?= $t('filter.all') ?></option>
+                <?php foreach ($formatFilters as $value => $label): ?>
+                    <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($label) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
 
         <div>
-            <label for="status">Status:</label>
+            <label for="status"><?= $t('filter.status') ?></label>
             <select name="status" id="status">
-                <option value="">Wszystkie</option>
-                <option value="open">Zapisy otwarte</option>
-                <option value="ongoing">W trakcie</option>
-                <option value="finished">Zakończony</option>
+                <option value=""><?= $t('filter.all') ?></option>
+                <?php foreach ($statusFilters as $status): ?>
+                    <option value="<?= htmlspecialchars($status) ?>"><?= $t('status.' . $status) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
 
-        <button type="submit" class="btn btn--primary">Filtruj</button>
+        <button type="submit" class="btn btn--primary"><?= $t('filter.submit') ?></button>
     </form>
 </section>
 
@@ -31,46 +40,38 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col">Nazwa</th>
-                    <th scope="col">Format</th>
-                    <th scope="col">Data</th>
-                    <th scope="col">Lokalizacja</th>
-                    <th scope="col">Zapisy</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Akcja</th>
+                    <th scope="col"><?= $t('tournaments.column.name') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.format') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.date') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.location') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.registrations') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.status') ?></th>
+                    <th scope="col"><?= $t('tournaments.column.action') ?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($tournaments as $t): ?>
+                <?php foreach ($tournaments as $tournament): ?>
                     <tr>
                         <td>
-                            <a href="/tournaments/<?= $t['id'] ?>">
-                                <?= htmlspecialchars($t['name']) ?>
+                            <a href="/tournaments/<?= (int) $tournament['id'] ?>">
+                                <?= htmlspecialchars($tournament['name']) ?>
                             </a>
                         </td>
-                        <td><?= htmlspecialchars($t['format']) ?></td>
-                        <td><?= htmlspecialchars($t['date']) ?></td>
-                        <td><?= htmlspecialchars($t['location']) ?></td>
-                        <td><?= $t['registeredPlayers'] ?> / <?= $t['maxPlayers'] ?></td>
+                        <td><?= htmlspecialchars($tournament['format']) ?></td>
+                        <td><?= htmlspecialchars($tournament['date']) ?></td>
+                        <td><?= htmlspecialchars($tournament['location']) ?></td>
+                        <td><?= (int) $tournament['registeredPlayers'] ?> / <?= (int) $tournament['maxPlayers'] ?></td>
                         <td>
-                            <?php
-                                $statusClass = match($t['status']) {
-                                    'Zapisy otwarte' => 'badge--status-open',
-                                    'W trakcie' => 'badge--status-ongoing',
-                                    'Zakończony' => 'badge--status-finished',
-                                    default => 'badge--status-closed',
-                                };
-                            ?>
-                            <span class="badge <?= $statusClass ?>"><?= htmlspecialchars($t['status']) ?></span>
+                            <span class="badge badge--status-<?= htmlspecialchars($tournament['status']) ?>"><?= $t('status.' . $tournament['status']) ?></span>
                         </td>
                         <td>
-                            <a href="/tournaments/<?= $t['id'] ?>" class="btn btn--secondary">Szczegóły</a>
+                            <a href="/tournaments/<?= (int) $tournament['id'] ?>" class="btn btn--secondary"><?= $t('tournaments.details') ?></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>Brak turniejów spełniających kryteria.</p>
+        <p><?= $t('tournaments.empty') ?></p>
     <?php endif; ?>
 </section>

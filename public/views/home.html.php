@@ -1,46 +1,46 @@
 <section class="hero">
-    <h1>Witaj w <span class="accent">DartArena</span></h1>
-    <p>Platforma do organizacji turniejów darta. Zapisz się na turniej, śledź drabinkę i sprawdzaj statystyki.</p>
+    <h1><?= $t('home.hero.title_prefix') ?> <span class="accent">DartArena</span></h1>
+    <p><?= $t('home.hero.description') ?></p>
 </section>
 
 <section>
     <div class="section-header">
-        <h2>Nadchodzące turnieje</h2>
-        <a href="/tournaments">Wszystkie turnieje →</a>
+        <h2><?= $t('home.upcoming.title') ?></h2>
+        <a href="/tournaments"><?= $t('home.upcoming.all') ?></a>
     </div>
     <?php if (!empty($upcomingTournaments)): ?>
         <div class="cards-grid">
-            <?php foreach ($upcomingTournaments as $t): ?>
-                <a href="/tournaments/<?= $t['id'] ?>" class="card card--link">
-                    <h3 class="card__title"><?= htmlspecialchars($t['name']) ?></h3>
-                    <p class="card__meta">📅 <?= htmlspecialchars($t['date']) ?></p>
-                    <span class="badge badge--status-open"><?= htmlspecialchars($t['status']) ?></span>
+            <?php foreach ($upcomingTournaments as $tournament): ?>
+                <a href="/tournaments/<?= (int) $tournament['id'] ?>" class="card card--link">
+                    <h3 class="card__title"><?= htmlspecialchars($tournament['name']) ?></h3>
+                    <p class="card__meta">📅 <?= htmlspecialchars($tournament['date']) ?></p>
+                    <span class="badge badge--status-<?= htmlspecialchars($tournament['status']) ?>"><?= $t('status.' . $tournament['status']) ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <p>Brak nadchodzących turniejów.</p>
+        <p><?= $t('home.upcoming.empty') ?></p>
     <?php endif; ?>
 </section>
 
 <section>
     <div class="section-header">
-        <h2>Top 3 graczy</h2>
-        <a href="/leaderboard">Pełny ranking →</a>
+        <h2><?= $t('home.top.title') ?></h2>
+        <a href="/leaderboard"><?= $t('home.top.all') ?></a>
     </div>
     <?php if (!empty($topPlayers)): ?>
         <table>
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Zawodnik</th>
-                    <th scope="col">Średnia (3 lotki)</th>
+                    <th scope="col"><?= $t('stats.rank') ?></th>
+                    <th scope="col"><?= $t('stats.player') ?></th>
+                    <th scope="col"><?= $t('stats.avg3') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($topPlayers as $p): ?>
                     <tr>
-                        <td class="rank-cell"><?= $p['rank'] ?></td>
+                        <td class="rank-cell"><?= (int) $p['rank'] ?></td>
                         <td><?= htmlspecialchars($p['name']) ?></td>
                         <td><?= number_format($p['avg3dart'], 1) ?></td>
                     </tr>

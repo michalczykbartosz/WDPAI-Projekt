@@ -1,24 +1,24 @@
-<h1>Panel organizatora – Utwórz nowy turniej</h1>
+<h1><?= $t('organizer.title') ?></h1>
 
 <form action="/organizer/create" method="post" class="card">
     <fieldset>
-        <legend>Podstawowe informacje</legend>
+        <legend><?= $t('organizer.section.basic') ?></legend>
 
-        <label for="name">Nazwa turnieju:</label>
+        <label for="name"><?= $t('organizer.name') ?></label>
         <input type="text" id="name" name="name" required
-               placeholder="np. Puchar Krakowa 2026" maxlength="100">
+               placeholder="<?= $t('organizer.name_placeholder') ?>" maxlength="100">
 
-        <label for="description">Opis:</label>
+        <label for="description"><?= $t('organizer.description') ?></label>
         <textarea id="description" name="description" rows="4"
-                  placeholder="Krótki opis turnieju..."></textarea>
+                  placeholder="<?= $t('organizer.description_placeholder') ?>"></textarea>
     </fieldset>
 
     <fieldset>
-        <legend>Parametry rozgrywki</legend>
+        <legend><?= $t('organizer.section.game') ?></legend>
 
-        <label for="format">Format gry:</label>
+        <label for="format"><?= $t('organizer.format') ?></label>
         <select id="format" name="format" required>
-            <option value="">— wybierz —</option>
+            <option value=""><?= $t('organizer.choose') ?></option>
             <?php foreach ($formats as $f): ?>
                 <option value="<?= htmlspecialchars($f) ?>">
                     <?= htmlspecialchars($f) ?>
@@ -26,32 +26,32 @@
             <?php endforeach; ?>
         </select>
 
-        <label for="max_players">Maks. liczba graczy:</label>
+        <label for="max_players"><?= $t('organizer.max_players') ?></label>
         <select id="max_players" name="max_players" required>
             <?php foreach ($maxPlayersOptions as $opt): ?>
-                <option value="<?= $opt ?>"><?= $opt ?></option>
+                <option value="<?= (int) $opt ?>"><?= (int) $opt ?></option>
             <?php endforeach; ?>
         </select>
 
-        <label for="legs_to_win">Legi do wygrania meczu:</label>
+        <label for="legs_to_win"><?= $t('organizer.legs_to_win') ?></label>
         <input type="number" id="legs_to_win" name="legs_to_win"
                value="3" min="1" max="10" required>
     </fieldset>
 
     <fieldset>
-        <legend>Termin i lokalizacja</legend>
+        <legend><?= $t('organizer.section.schedule') ?></legend>
 
-        <label for="date">Data turnieju:</label>
+        <label for="date"><?= $t('organizer.date') ?></label>
         <input type="date" id="date" name="date" required>
 
-        <label for="registration_deadline">Zamknięcie zapisów:</label>
+        <label for="registration_deadline"><?= $t('organizer.deadline') ?></label>
         <input type="datetime-local" id="registration_deadline"
                name="registration_deadline" required>
 
-        <label for="location">Lokalizacja:</label>
+        <label for="location"><?= $t('organizer.location') ?></label>
         <input type="text" id="location" name="location" required
-               placeholder="np. Kraków, Dart Arena" maxlength="150">
+               placeholder="<?= $t('organizer.location_placeholder') ?>" maxlength="150">
     </fieldset>
 
-    <button type="submit">Utwórz turniej</button>
+    <button type="submit"><?= $t('organizer.submit') ?></button>
 </form>

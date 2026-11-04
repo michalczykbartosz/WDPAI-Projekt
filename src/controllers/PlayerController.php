@@ -20,7 +20,7 @@ final class PlayerController extends AppController
         ];
 
         $this->render('leaderboard', [
-            'pageTitle' => 'Ranking graczy – DartArena',
+            'pageTitle' => $this->translator->get('title.leaderboard'),
             'activePage' => 'leaderboard',
             'players' => $players,
         ]);
@@ -50,7 +50,7 @@ final class PlayerController extends AppController
         ];
 
         $this->render('player-profile', [
-            'pageTitle' => $player['name'] . ' – Profil – DartArena',
+            'pageTitle' => $this->translator->get('title.profile', ['name' => $player['name']]),
             'player' => $player,
             'recentMatches' => $recentMatches,
         ]);

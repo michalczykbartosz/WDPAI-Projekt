@@ -1,79 +1,68 @@
+<?php
+$careerStats = [
+    'stats.matches' => (string) (int) $player['matchesPlayed'],
+    'stats.wins' => (string) (int) $player['wins'],
+    'stats.losses' => (string) (int) $player['losses'],
+    'stats.win_rate' => number_format($player['winRate'], 1) . '%',
+    'stats.avg3' => number_format($player['avg3dart'], 1),
+    'stats.180s' => (string) (int) $player['total180s'],
+    'stats.best_checkout' => (string) (int) $player['bestCheckout'],
+];
+?>
 <article>
-    <h1>Profil zawodnika</h1>
+    <h1><?= $t('profile.title') ?></h1>
 
     <section class="card mb-lg">
         <div class="profile-header">
             <figure>
                 <?php if ($player['avatar']): ?>
                     <img src="<?= htmlspecialchars($player['avatar']) ?>"
-                         alt="Awatar <?= htmlspecialchars($player['name']) ?>"
+                         alt="<?= $t('profile.avatar_alt', ['name' => $player['name']]) ?>"
                          class="avatar">
                 <?php else: ?>
-                    <div class="avatar-placeholder">🎯</div>
+                    <div class="avatar-placeholder" aria-hidden="true">🎯</div>
                 <?php endif; ?>
             </figure>
 
             <div>
                 <h2><?= htmlspecialchars($player['name']) ?></h2>
-                <p class="text-muted">Członek od: <?= htmlspecialchars($player['joinedDate']) ?></p>
+                <p class="text-muted"><?= $t('profile.member_since', ['date' => $player['joinedDate']]) ?></p>
 
-                <form action="/players/<?= $player['id'] ?>/avatar" method="post" enctype="multipart/form-data" class="mt-md">
-                    <label for="avatar">Zmień zdjęcie profilowe:</label>
+                <form action="/players/<?= (int) $player['id'] ?>/avatar" method="post" enctype="multipart/form-data" class="mt-md">
+                    <label for="avatar"><?= $t('profile.change_avatar') ?></label>
                     <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
-                    <button type="submit" class="btn btn--secondary mt-sm">Prześlij</button>
+                    <button type="submit" class="btn btn--secondary mt-sm"><?= $t('profile.upload') ?></button>
                 </form>
             </div>
         </div>
     </section>
 
     <section>
-        <h2>Statystyki kariery</h2>
+        <h2><?= $t('profile.career') ?></h2>
         <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-card__value"><?= $player['matchesPlayed'] ?></span>
-                <span class="stat-card__label">Mecze</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= $player['wins'] ?></span>
-                <span class="stat-card__label">Wygrane</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= $player['losses'] ?></span>
-                <span class="stat-card__label">Przegrane</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= number_format($player['winRate'], 1) ?>%</span>
-                <span class="stat-card__label">% wygranych</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= number_format($player['avg3dart'], 1) ?></span>
-                <span class="stat-card__label">Średnia 3 lotek</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= $player['total180s'] ?></span>
-                <span class="stat-card__label">180-ki</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-card__value"><?= $player['bestCheckout'] ?></span>
-                <span class="stat-card__label">Rekordowy checkout</span>
-            </div>
+            <?php foreach ($careerStats as $labelKey => $value): ?>
+                <div class="stat-card">
+                    <span class="stat-card__value"><?= htmlspecialchars($value) ?></span>
+                    <span class="stat-card__label"><?= $t($labelKey) ?></span>
+                </div>
+            <?php endforeach; ?>
         </div>
     </section>
 </article>
 
 <section>
-    <h2>Ostatnie mecze</h2>
+    <h2><?= $t('profile.recent') ?></h2>
     <?php if (!empty($recentMatches)): ?>
         <table>
             <thead>
                 <tr>
-                    <th scope="col">Data</th>
-                    <th scope="col">Turniej</th>
-                    <th scope="col">Przeciwnik</th>
-                    <th scope="col">Wynik</th>
-                    <th scope="col">Średnia</th>
-                    <th scope="col">180-ki</th>
-                    <th scope="col">Checkout</th>
+                    <th scope="col"><?= $t('stats.date') ?></th>
+                    <th scope="col"><?= $t('stats.tournament') ?></th>
+                    <th scope="col"><?= $t('stats.opponent') ?></th>
+                    <th scope="col"><?= $t('stats.result') ?></th>
+                    <th scope="col"><?= $t('stats.average') ?></th>
+                    <th scope="col"><?= $t('stats.180s') ?></th>
+                    <th scope="col"><?= $t('stats.checkout') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -84,13 +73,13 @@
                         <td><?= htmlspecialchars($m['opponent']) ?></td>
                         <td><strong><?= htmlspecialchars($m['result']) ?></strong></td>
                         <td><?= number_format($m['avg'], 1) ?></td>
-                        <td><?= $m['max180s'] ?></td>
-                        <td><?= $m['checkout'] ?></td>
+                        <td><?= (int) $m['max180s'] ?></td>
+                        <td><?= (int) $m['checkout'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php else: ?>
-        <p>Brak historii meczów.</p>
+        <p><?= $t('profile.no_matches') ?></p>
     <?php endif; ?>
 </section>

@@ -1,5 +1,5 @@
 <footer>
     <div class="container">
-        <p>&copy; 2026 DartArena. Projekt WDPAI.</p>
+        <p><?= $t('footer.copyright') ?></p>
     </div>
 </footer>

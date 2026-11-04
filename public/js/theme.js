@@ -25,8 +25,9 @@ dark/light theme
         if (!btn) return;
         const theme = html.getAttribute('data-theme') || 'dark';
         btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        // Etykiety pochodzą z atrybutów data-*, które serwer ustawia w aktualnym języku.
         btn.setAttribute('aria-label',
-            theme === 'dark' ? 'Przełącz na jasny motyw' : 'Przełącz na ciemny motyw'
+            theme === 'dark' ? btn.dataset.labelToLight : btn.dataset.labelToDark
         );
     }
 

@@ -1,39 +1,39 @@
-<h1>Globalny ranking graczy</h1>
-<p>Ranking wyliczany na podstawie zagregowanych statystyk ze wszystkich turniejów.</p>
+<h1><?= $t('leaderboard.title') ?></h1>
+<p><?= $t('leaderboard.description') ?></p>
 
 <?php if (!empty($players)): ?>
     <table>
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Zawodnik</th>
-                <th scope="col">Mecze</th>
-                <th scope="col">Wygrane</th>
-                <th scope="col">% wygranych</th>
-                <th scope="col">Średnia (3 lotki)</th>
-                <th scope="col">180-ki</th>
-                <th scope="col">Najlepszy checkout</th>
+                <th scope="col"><?= $t('stats.rank') ?></th>
+                <th scope="col"><?= $t('stats.player') ?></th>
+                <th scope="col"><?= $t('stats.matches') ?></th>
+                <th scope="col"><?= $t('stats.wins') ?></th>
+                <th scope="col"><?= $t('stats.win_rate') ?></th>
+                <th scope="col"><?= $t('stats.avg3') ?></th>
+                <th scope="col"><?= $t('stats.180s') ?></th>
+                <th scope="col"><?= $t('stats.best_checkout') ?></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($players as $p): ?>
                 <tr>
-                    <td class="rank-cell"><?= $p['rank'] ?></td>
+                    <td class="rank-cell"><?= (int) $p['rank'] ?></td>
                     <td>
                         <a href="/players/<?= (int) $p['id'] ?>">
                             <?= htmlspecialchars($p['name']) ?>
                         </a>
                     </td>
-                    <td><?= $p['matchesPlayed'] ?></td>
-                    <td><?= $p['wins'] ?></td>
+                    <td><?= (int) $p['matchesPlayed'] ?></td>
+                    <td><?= (int) $p['wins'] ?></td>
                     <td><?= number_format($p['winRate'], 1) ?>%</td>
                     <td><?= number_format($p['avg3dart'], 1) ?></td>
-                    <td><?= $p['max180s'] ?></td>
-                    <td><?= $p['bestCheckout'] ?></td>
+                    <td><?= (int) $p['max180s'] ?></td>
+                    <td><?= (int) $p['bestCheckout'] ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 <?php else: ?>
-    <p>Brak danych do wyświetlenia rankingu.</p>
+    <p><?= $t('leaderboard.empty') ?></p>
 <?php endif; ?>

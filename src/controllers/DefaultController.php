@@ -9,8 +9,8 @@ final class DefaultController extends AppController
     public function index(): void
     {
         $upcomingTournaments = [
-            ['id' => 1, 'name' => 'Puchar Krakowa 2026', 'date' => '2026-11-15', 'status' => 'Zapisy otwarte'],
-            ['id' => 2, 'name' => 'Liga Zimowa – Runda 1', 'date' => '2026-12-01', 'status' => 'Zapisy otwarte'],
+            ['id' => 1, 'name' => 'Puchar Krakowa 2026', 'date' => '2026-11-15', 'status' => 'open'],
+            ['id' => 2, 'name' => 'Liga Zimowa – Runda 1', 'date' => '2026-12-01', 'status' => 'open'],
         ];
 
         $topPlayers = [
@@ -20,7 +20,7 @@ final class DefaultController extends AppController
         ];
 
         $this->render('home', [
-            'pageTitle' => 'DartArena – Platforma turniejów darta',
+            'pageTitle' => $this->translator->get('title.home'),
             'upcomingTournaments' => $upcomingTournaments,
             'topPlayers' => $topPlayers,
         ]);
@@ -29,11 +29,11 @@ final class DefaultController extends AppController
     public function notFound(): void
     {
         $this->render('not-found', [
-            'pageTitle' => '404 – Nie znaleziono strony – DartArena',
+            'pageTitle' => $this->translator->get('title.not_found'),
             'suggestedLinks' => [
-                ['url' => '/', 'label' => 'Strona główna'],
-                ['url' => '/tournaments', 'label' => 'Turnieje'],
-                ['url' => '/leaderboard', 'label' => 'Ranking'],
+                ['url' => '/', 'label' => 'nav.home'],
+                ['url' => '/tournaments', 'label' => 'nav.tournaments'],
+                ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
             ],
         ]);
     }

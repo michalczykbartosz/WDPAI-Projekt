@@ -1,15 +1,15 @@
 <div class="error-page">
     <h1>404</h1>
-    <p>Przepraszamy, szukana strona nie istnieje lub została usunięta.</p>
+    <p><?= $t('not_found.message') ?></p>
 
     <?php if (!empty($suggestedLinks)): ?>
         <nav>
-            <h2>Może szukasz:</h2>
+            <h2><?= $t('not_found.suggestions') ?></h2>
             <ul>
                 <?php foreach ($suggestedLinks as $link): ?>
                     <li>
                         <a href="<?= htmlspecialchars($link['url']) ?>">
-                            <?= htmlspecialchars($link['label']) ?>
+                            <?= $t($link['label']) ?>
                         </a>
                     </li>
                 <?php endforeach; ?>

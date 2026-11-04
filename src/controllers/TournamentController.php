@@ -14,7 +14,7 @@ final class TournamentController extends AppController
                 'name' => 'Puchar Krakowa 2026',
                 'format' => '501 Double Out',
                 'date' => '2026-11-15',
-                'status' => 'Zapisy otwarte',
+                'status' => 'open',
                 'maxPlayers' => 16,
                 'registeredPlayers' => 9,
                 'location' => 'Kraków, Dart Arena',
@@ -24,7 +24,7 @@ final class TournamentController extends AppController
                 'name' => 'Liga Zimowa – Runda 1',
                 'format' => '501 Double Out',
                 'date' => '2026-12-01',
-                'status' => 'Zapisy otwarte',
+                'status' => 'open',
                 'maxPlayers' => 8,
                 'registeredPlayers' => 5,
                 'location' => 'Warszawa, Bull\'s Eye Pub',
@@ -34,7 +34,7 @@ final class TournamentController extends AppController
                 'name' => 'Turniej Mikołajkowy',
                 'format' => '301 Double Out',
                 'date' => '2026-12-06',
-                'status' => 'Zakończony',
+                'status' => 'finished',
                 'maxPlayers' => 8,
                 'registeredPlayers' => 8,
                 'location' => 'Gdańsk, Triple Twenty Club',
@@ -42,7 +42,7 @@ final class TournamentController extends AppController
         ];
 
         $this->render('tournaments', [
-            'pageTitle' => 'Turnieje – DartArena',
+            'pageTitle' => $this->translator->get('title.tournaments'),
             'activePage' => 'tournaments',
             'tournaments' => $tournaments,
         ]);
@@ -55,7 +55,7 @@ final class TournamentController extends AppController
             'name' => 'Puchar Krakowa 2026',
             'format' => '501 Double Out',
             'date' => '2026-11-15',
-            'status' => 'W trakcie',
+            'status' => 'ongoing',
             'location' => 'Kraków, Dart Arena',
             'maxPlayers' => 8,
         ];
@@ -73,22 +73,22 @@ final class TournamentController extends AppController
 
         $bracket = [
             'quarterfinals' => [
-                ['id' => 101, 'player1' => 'Jan Kowalski', 'player2' => 'Łukasz Szymański', 'score1' => 3, 'score2' => 1, 'status' => 'Zakończony'],
-                ['id' => 102, 'player1' => 'Piotr Wiśniewski', 'player2' => 'Marcin Wójcik', 'score1' => 3, 'score2' => 0, 'status' => 'Zakończony'],
-                ['id' => 103, 'player1' => 'Tomasz Lewandowski', 'player2' => 'Krzysztof Zieliński', 'score1' => 2, 'score2' => 3, 'status' => 'Zakończony'],
-                ['id' => 104, 'player1' => 'Adam Nowak', 'player2' => 'Paweł Kamiński', 'score1' => null, 'score2' => null, 'status' => 'Oczekuje'],
+                ['id' => 101, 'player1' => 'Jan Kowalski', 'player2' => 'Łukasz Szymański', 'score1' => 3, 'score2' => 1, 'status' => 'finished'],
+                ['id' => 102, 'player1' => 'Piotr Wiśniewski', 'player2' => 'Marcin Wójcik', 'score1' => 3, 'score2' => 0, 'status' => 'finished'],
+                ['id' => 103, 'player1' => 'Tomasz Lewandowski', 'player2' => 'Krzysztof Zieliński', 'score1' => 2, 'score2' => 3, 'status' => 'finished'],
+                ['id' => 104, 'player1' => 'Adam Nowak', 'player2' => 'Paweł Kamiński', 'score1' => null, 'score2' => null, 'status' => 'pending'],
             ],
             'semifinals' => [
-                ['id' => 201, 'player1' => 'Jan Kowalski', 'player2' => 'Piotr Wiśniewski', 'score1' => null, 'score2' => null, 'status' => 'Oczekuje'],
-                ['id' => 202, 'player1' => 'Krzysztof Zieliński', 'player2' => '—', 'score1' => null, 'score2' => null, 'status' => 'Oczekuje'],
+                ['id' => 201, 'player1' => 'Jan Kowalski', 'player2' => 'Piotr Wiśniewski', 'score1' => null, 'score2' => null, 'status' => 'pending'],
+                ['id' => 202, 'player1' => 'Krzysztof Zieliński', 'player2' => null, 'score1' => null, 'score2' => null, 'status' => 'pending'],
             ],
             'final' => [
-                ['id' => 301, 'player1' => '—', 'player2' => '—', 'score1' => null, 'score2' => null, 'status' => 'Oczekuje'],
+                ['id' => 301, 'player1' => null, 'player2' => null, 'score1' => null, 'score2' => null, 'status' => 'pending'],
             ],
         ];
 
         $this->render('tournament-detail', [
-            'pageTitle' => $tournament['name'] . ' – DartArena',
+            'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament['name']]),
             'activePage' => 'tournaments',
             'tournament' => $tournament,
             'players' => $players,
@@ -99,7 +99,7 @@ final class TournamentController extends AppController
     public function create(): void
     {
         $this->render('organizer-create', [
-            'pageTitle' => 'Utwórz turniej – Panel Organizatora',
+            'pageTitle' => $this->translator->get('title.organizer_create'),
             'activePage' => 'organizer',
             'userRole' => 'organizer',
             'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
