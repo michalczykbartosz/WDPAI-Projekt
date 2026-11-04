@@ -6,17 +6,18 @@ dark/light theme
     const btn  = document.querySelector('.theme-toggle');
     const KEY  = 'dartarena-theme';
 
-    const saved = localStorage.getItem(KEY);
-    if (saved) {
-        html.setAttribute('data-theme', saved);
-    }
+    // Motyw startowy ustawia już skrypt w <head>, tutaj tylko synchronizujemy ikonę.
     updateIcon();
 
     function toggleTheme() {
         const current = html.getAttribute('data-theme') || 'dark';
         const next    = current === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
-        localStorage.setItem(KEY, next);
+        try {
+            localStorage.setItem(KEY, next);
+        } catch (e) {
+            // Brak dostępu do localStorage (np. tryb prywatny) – motyw działa do odświeżenia strony.
+        }
         updateIcon();
     }
 
@@ -29,5 +30,7 @@ dark/light theme
         );
     }
 
-    window.toggleTheme = toggleTheme;
+    if (btn) {
+        btn.addEventListener('click', toggleTheme);
+    }
 })();
