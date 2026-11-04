@@ -11,7 +11,7 @@
     <?php if (!empty($upcomingTournaments)): ?>
         <div class="cards-grid">
             <?php foreach ($upcomingTournaments as $t): ?>
-                <a href="/tournaments/<?= $t['id'] ?>" class="card" style="text-decoration:none;">
+                <a href="/tournaments/<?= $t['id'] ?>" class="card card--link">
                     <h3 class="card__title"><?= htmlspecialchars($t['name']) ?></h3>
                     <p class="card__meta">📅 <?= htmlspecialchars($t['date']) ?></p>
                     <span class="badge badge--status-open"><?= htmlspecialchars($t['status']) ?></span>

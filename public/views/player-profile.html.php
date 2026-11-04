@@ -2,7 +2,7 @@
     <h1>Profil zawodnika</h1>
 
     <section class="card mb-lg">
-        <div style="display:flex; gap:var(--space-xl); align-items:flex-start; flex-wrap:wrap;">
+        <div class="profile-header">
             <figure>
                 <?php if ($player['avatar']): ?>
                     <img src="<?= htmlspecialchars($player['avatar']) ?>"

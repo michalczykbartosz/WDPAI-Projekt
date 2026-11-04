@@ -29,5 +29,7 @@ dark/light theme
         );
     }
 
-    window.toggleTheme = toggleTheme;
+    if (btn) {
+        btn.addEventListener('click', toggleTheme);
+    }
 })();
