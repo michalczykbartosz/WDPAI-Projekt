@@ -114,4 +114,89 @@ CREATE TABLE match_statistics (
 
 CREATE INDEX match_statistics_user_idx ON match_statistics (user_id);
 
+CREATE FUNCTION set_updated_at() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    NEW.updated_at := now();
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER users_set_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER player_profiles_set_updated_at
+    BEFORE UPDATE ON player_profiles
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER tournaments_set_updated_at
+    BEFORE UPDATE ON tournaments
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER matches_set_updated_at
+    BEFORE UPDATE ON matches
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE VIEW v_leaderboard AS
+WITH player_matches AS (
+    SELECT m.tournament_id, p.user_id, m.winner_id = p.user_id AS won
+    FROM matches m
+    CROSS JOIN LATERAL (VALUES (m.player1_id), (m.player2_id)) AS p (user_id)
+    WHERE m.status = 'finished'
+      AND m.player1_id IS NOT NULL
+      AND m.player2_id IS NOT NULL
+),
+match_totals AS (
+    SELECT user_id,
+           count(*) AS matches_played,
+           count(*) FILTER (WHERE won) AS wins,
+           count(DISTINCT tournament_id) AS tournaments_played
+    FROM player_matches
+    GROUP BY user_id
+),
+stat_totals AS (
+    SELECT user_id,
+           round(avg(three_dart_average), 2) AS three_dart_average,
+           sum(count_180s) AS total_180s,
+           max(highest_checkout) AS best_checkout
+    FROM match_statistics
+    GROUP BY user_id
+),
+finals AS (
+    SELECT DISTINCT ON (m.tournament_id) m.tournament_id, m.winner_id
+    FROM matches m
+    JOIN tournaments t ON t.id = m.tournament_id
+    WHERE t.status = 'finished' AND m.status = 'finished'
+    ORDER BY m.tournament_id, m.round DESC
+),
+titles AS (
+    SELECT winner_id AS user_id, count(*) AS tournaments_won
+    FROM finals
+    GROUP BY winner_id
+),
+totals AS (
+    SELECT pp.user_id,
+           pp.display_name,
+           pp.avatar_path,
+           coalesce(mt.tournaments_played, 0) AS tournaments_played,
+           coalesce(mt.matches_played, 0) AS matches_played,
+           coalesce(mt.wins, 0) AS wins,
+           coalesce(mt.matches_played, 0) - coalesce(mt.wins, 0) AS losses,
+           coalesce(round(100.0 * mt.wins / nullif(mt.matches_played, 0), 1), 0) AS win_rate,
+           st.three_dart_average,
+           coalesce(st.total_180s, 0) AS total_180s,
+           st.best_checkout,
+           coalesce(ti.tournaments_won, 0) AS tournaments_won,
+           coalesce(mt.wins, 0) * 10 + coalesce(ti.tournaments_won, 0) * 25 AS points
+    FROM player_profiles pp
+    JOIN users u ON u.id = pp.user_id AND u.role = 'PLAYER'
+    LEFT JOIN match_totals mt ON mt.user_id = pp.user_id
+    LEFT JOIN stat_totals st ON st.user_id = pp.user_id
+    LEFT JOIN titles ti ON ti.user_id = pp.user_id
+)
+SELECT rank() OVER (ORDER BY points DESC, wins DESC, three_dart_average DESC NULLS LAST) AS rank,
+       totals.*
+FROM totals;
+
 COMMIT;
