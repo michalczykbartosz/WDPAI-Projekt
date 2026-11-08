@@ -36,6 +36,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pg-data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d:ro
     networks:
       - pg-network
 
