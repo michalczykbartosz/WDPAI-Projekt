@@ -19,6 +19,12 @@ services:
     # Katalog projektu jest montowany na /app i przykrywa vendor/ z obrazu,
     # dlatego zależności są instalowane przy starcie kontenera (czysty klon repo).
     command: sh -c "composer install --no-interaction && php-fpm"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - .:/app
     depends_on:

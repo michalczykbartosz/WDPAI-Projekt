@@ -34,6 +34,8 @@ RUN { \
       echo 'max_file_uploads = 20'; \
     } > /usr/local/etc/php/conf.d/darttournament.ini
 
+RUN echo 'clear_env = no' >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
 COPY composer.json .
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
