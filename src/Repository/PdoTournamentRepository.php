@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Database\Database;
 use App\Model\FinishRule;
 use App\Model\GameMatch;
 use App\Model\MatchStatus;
@@ -13,17 +12,13 @@ use App\Model\Tournament;
 use App\Model\TournamentStatus;
 use DateTimeImmutable;
 
-final class PdoTournamentRepository implements TournamentRepositoryInterface
+final class PdoTournamentRepository extends PdoRepository implements TournamentRepositoryInterface
 {
     private const SELECT_TOURNAMENT = <<<'SQL'
         SELECT t.*, count(tp.user_id) AS registered_players
         FROM tournaments t
         LEFT JOIN tournament_participants tp ON tp.tournament_id = t.id
         SQL;
-
-    public function __construct(private readonly Database $database)
-    {
-    }
 
     public function findPublished(?TournamentStatus $status = null): array
     {
@@ -80,24 +75,12 @@ final class PdoTournamentRepository implements TournamentRepositoryInterface
 
     private function findOneBy(string $condition, int|string $value): ?Tournament
     {
-        $rows = $this->fetchAll(
+        $row = $this->fetchOne(
             self::SELECT_TOURNAMENT . ' WHERE ' . $condition . ' GROUP BY t.id',
             ['value' => $value],
         );
 
-        return $rows === [] ? null : $this->mapTournament($rows[0]);
-    }
-
-    /**
-     * @param array<string, int|string> $parameters
-     * @return list<array<string, mixed>>
-     */
-    private function fetchAll(string $sql, array $parameters): array
-    {
-        $statement = $this->database->connection()->prepare($sql);
-        $statement->execute($parameters);
-
-        return $statement->fetchAll();
+        return $row === null ? null : $this->mapTournament($row);
     }
 
     /** @param array<string, mixed> $row */
@@ -150,10 +133,5 @@ final class PdoTournamentRepository implements TournamentRepositoryInterface
             MatchStatus::from($row['status']),
             $row['played_at'] !== null ? new DateTimeImmutable($row['played_at']) : null,
         );
-    }
-
-    private static function nullableInt(mixed $value): ?int
-    {
-        return $value !== null ? (int) $value : null;
     }
 }

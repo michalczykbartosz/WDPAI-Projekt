@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Database\Database;
 use App\Model\MatchHistoryEntry;
 use App\Model\PlayerProfile;
 use App\Model\PlayerStats;
 use DateTimeImmutable;
 
-final class PdoPlayerRepository implements PlayerRepositoryInterface
+final class PdoPlayerRepository extends PdoRepository implements PlayerRepositoryInterface
 {
-    public function __construct(private readonly Database $database)
-    {
-    }
-
     public function findLeaderboard(?int $limit = null): array
     {
         $sql = 'SELECT * FROM v_leaderboard ORDER BY rank, display_name';
@@ -31,25 +26,23 @@ final class PdoPlayerRepository implements PlayerRepositoryInterface
 
     public function findStats(int $userId): ?PlayerStats
     {
-        $rows = $this->fetchAll('SELECT * FROM v_leaderboard WHERE user_id = :user_id', ['user_id' => $userId]);
+        $row = $this->fetchOne('SELECT * FROM v_leaderboard WHERE user_id = :user_id', ['user_id' => $userId]);
 
-        return $rows === [] ? null : $this->mapStats($rows[0]);
+        return $row === null ? null : $this->mapStats($row);
     }
 
     public function findProfile(int $userId): ?PlayerProfile
     {
-        $rows = $this->fetchAll(<<<'SQL'
+        $row = $this->fetchOne(<<<'SQL'
             SELECT pp.user_id, pp.display_name, pp.club, pp.avatar_path, u.created_at
             FROM player_profiles pp
             JOIN users u ON u.id = pp.user_id
             WHERE pp.user_id = :user_id
             SQL, ['user_id' => $userId]);
 
-        if ($rows === []) {
+        if ($row === null) {
             return null;
         }
-
-        $row = $rows[0];
 
         return new PlayerProfile(
             (int) $row['user_id'],
@@ -94,18 +87,6 @@ final class PdoPlayerRepository implements PlayerRepositoryInterface
         return array_map($this->mapHistoryEntry(...), $rows);
     }
 
-    /**
-     * @param array<string, int|string> $parameters
-     * @return list<array<string, mixed>>
-     */
-    private function fetchAll(string $sql, array $parameters): array
-    {
-        $statement = $this->database->connection()->prepare($sql);
-        $statement->execute($parameters);
-
-        return $statement->fetchAll();
-    }
-
     /** @param array<string, mixed> $row */
     private function mapStats(array $row): PlayerStats
     {
@@ -144,15 +125,5 @@ final class PdoPlayerRepository implements PlayerRepositoryInterface
             self::nullableInt($row['count_180s']),
             self::nullableInt($row['highest_checkout']),
         );
-    }
-
-    private static function nullableInt(mixed $value): ?int
-    {
-        return $value !== null ? (int) $value : null;
-    }
-
-    private static function nullableFloat(mixed $value): ?float
-    {
-        return $value !== null ? (float) $value : null;
     }
 }
