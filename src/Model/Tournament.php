@@ -22,6 +22,7 @@ final readonly class Tournament
         public int $legsToWin,
         public string $inviteCode,
         public TournamentStatus $status,
+        public int $registeredPlayers = 0,
     ) {
     }
 
