@@ -52,6 +52,7 @@ return [
     'stats.result' => 'Result',
     'stats.average' => 'Average',
     'stats.checkout' => 'Checkout',
+    'stats.points' => 'Points',
 
     // Tournament and match statuses
     'status.open' => 'Registration open',
@@ -130,6 +131,8 @@ return [
     'profile.career' => 'Career statistics',
     'profile.recent' => 'Recent matches',
     'profile.no_matches' => 'No match history.',
+    'profile.win' => 'W',
+    'profile.loss' => 'L',
 
     // Organizer panel
     'organizer.title' => 'Organizer panel – Create a new tournament',

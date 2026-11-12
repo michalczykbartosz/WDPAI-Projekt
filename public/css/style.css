@@ -338,6 +338,8 @@ main > .container > section {
 .badge--status-ongoing  { background: var(--color-info);      color: #FFFFFF; }
 .badge--status-closed   { background: var(--color-danger);    color: #FFFFFF; }
 .badge--status-finished { background: var(--color-text-muted); color: #FFFFFF; }
+.badge--result-win      { background: var(--color-success);   color: var(--color-text-inverse); }
+.badge--result-loss     { background: var(--color-danger);    color: #FFFFFF; }
 
 .hamburger {
     display: none;

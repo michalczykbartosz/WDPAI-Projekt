@@ -13,23 +13,25 @@
                 <th scope="col"><?= $t('stats.avg3') ?></th>
                 <th scope="col"><?= $t('stats.180s') ?></th>
                 <th scope="col"><?= $t('stats.best_checkout') ?></th>
+                <th scope="col"><?= $t('stats.points') ?></th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($players as $p): ?>
+            <?php foreach ($players as $player): ?>
                 <tr>
-                    <td class="rank-cell"><?= (int) $p['rank'] ?></td>
+                    <td class="rank-cell"><?= $player->rank ?></td>
                     <td>
-                        <a href="/players/<?= (int) $p['id'] ?>">
-                            <?= htmlspecialchars($p['name']) ?>
+                        <a href="/players/<?= $player->userId ?>">
+                            <?= htmlspecialchars($player->displayName) ?>
                         </a>
                     </td>
-                    <td><?= (int) $p['matchesPlayed'] ?></td>
-                    <td><?= (int) $p['wins'] ?></td>
-                    <td><?= number_format($p['winRate'], 1) ?>%</td>
-                    <td><?= number_format($p['avg3dart'], 1) ?></td>
-                    <td><?= (int) $p['max180s'] ?></td>
-                    <td><?= (int) $p['bestCheckout'] ?></td>
+                    <td><?= $player->matchesPlayed ?></td>
+                    <td><?= $player->wins ?></td>
+                    <td><?= number_format($player->winRate, 1) ?>%</td>
+                    <td><?= $player->threeDartAverage !== null ? number_format($player->threeDartAverage, 1) : '–' ?></td>
+                    <td><?= $player->total180s ?></td>
+                    <td><?= $player->bestCheckout ?? '–' ?></td>
+                    <td><strong><?= $player->points ?></strong></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

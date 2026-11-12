@@ -38,11 +38,11 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($topPlayers as $p): ?>
+                <?php foreach ($topPlayers as $player): ?>
                     <tr>
-                        <td class="rank-cell"><?= (int) $p['rank'] ?></td>
-                        <td><?= htmlspecialchars($p['name']) ?></td>
-                        <td><?= number_format($p['avg3dart'], 1) ?></td>
+                        <td class="rank-cell"><?= $player->rank ?></td>
+                        <td><a href="/players/<?= $player->userId ?>"><?= htmlspecialchars($player->displayName) ?></a></td>
+                        <td><?= $player->threeDartAverage !== null ? number_format($player->threeDartAverage, 1) : '–' ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

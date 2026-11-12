@@ -52,6 +52,7 @@ return [
     'stats.result' => 'Wynik',
     'stats.average' => 'Średnia',
     'stats.checkout' => 'Checkout',
+    'stats.points' => 'Punkty',
 
     // Statusy turnieju i meczu
     'status.open' => 'Zapisy otwarte',
@@ -130,6 +131,8 @@ return [
     'profile.career' => 'Statystyki kariery',
     'profile.recent' => 'Ostatnie mecze',
     'profile.no_matches' => 'Brak historii meczów.',
+    'profile.win' => 'W',
+    'profile.loss' => 'P',
 
     // Panel organizatora
     'organizer.title' => 'Panel organizatora – Utwórz nowy turniej',

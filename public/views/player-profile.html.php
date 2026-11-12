@@ -1,12 +1,13 @@
 <?php
 $careerStats = [
-    'stats.matches' => (string) (int) $player['matchesPlayed'],
-    'stats.wins' => (string) (int) $player['wins'],
-    'stats.losses' => (string) (int) $player['losses'],
-    'stats.win_rate' => number_format($player['winRate'], 1) . '%',
-    'stats.avg3' => number_format($player['avg3dart'], 1),
-    'stats.180s' => (string) (int) $player['total180s'],
-    'stats.best_checkout' => (string) (int) $player['bestCheckout'],
+    'stats.matches' => (string) $stats->matchesPlayed,
+    'stats.wins' => (string) $stats->wins,
+    'stats.losses' => (string) $stats->losses,
+    'stats.win_rate' => number_format($stats->winRate, 1) . '%',
+    'stats.avg3' => $stats->threeDartAverage !== null ? number_format($stats->threeDartAverage, 1) : '–',
+    'stats.180s' => (string) $stats->total180s,
+    'stats.best_checkout' => $stats->bestCheckout !== null ? (string) $stats->bestCheckout : '–',
+    'stats.points' => (string) $stats->points,
 ];
 ?>
 <article>
@@ -15,9 +16,9 @@ $careerStats = [
     <section class="card mb-lg">
         <div class="profile-header">
             <figure>
-                <?php if ($player['avatar']): ?>
-                    <img src="<?= htmlspecialchars($player['avatar']) ?>"
-                         alt="<?= $t('profile.avatar_alt', ['name' => $player['name']]) ?>"
+                <?php if ($profile->avatarPath !== null): ?>
+                    <img src="<?= htmlspecialchars($profile->avatarPath) ?>"
+                         alt="<?= $t('profile.avatar_alt', ['name' => $profile->displayName]) ?>"
                          class="avatar">
                 <?php else: ?>
                     <div class="avatar-placeholder" aria-hidden="true">🎯</div>
@@ -25,10 +26,13 @@ $careerStats = [
             </figure>
 
             <div>
-                <h2><?= htmlspecialchars($player['name']) ?></h2>
-                <p class="text-muted"><?= $t('profile.member_since', ['date' => $player['joinedDate']]) ?></p>
+                <h2><?= htmlspecialchars($profile->displayName) ?></h2>
+                <?php if ($profile->club !== null): ?>
+                    <p><?= htmlspecialchars($profile->club) ?></p>
+                <?php endif; ?>
+                <p class="text-muted"><?= $t('profile.member_since', ['date' => $profile->memberSince->format('Y-m-d')]) ?></p>
 
-                <form action="/players/<?= (int) $player['id'] ?>/avatar" method="post" enctype="multipart/form-data" class="mt-md">
+                <form action="/players/<?= $profile->userId ?>/avatar" method="post" enctype="multipart/form-data" class="mt-md">
                     <label for="avatar"><?= $t('profile.change_avatar') ?></label>
                     <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
                     <button type="submit" class="btn btn--secondary mt-sm"><?= $t('profile.upload') ?></button>
@@ -66,15 +70,26 @@ $careerStats = [
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($recentMatches as $m): ?>
+                <?php foreach ($recentMatches as $match): ?>
                     <tr>
-                        <td><?= htmlspecialchars($m['date']) ?></td>
-                        <td><?= htmlspecialchars($m['tournament']) ?></td>
-                        <td><?= htmlspecialchars($m['opponent']) ?></td>
-                        <td><strong><?= htmlspecialchars($m['result']) ?></strong></td>
-                        <td><?= number_format($m['avg'], 1) ?></td>
-                        <td><?= (int) $m['max180s'] ?></td>
-                        <td><?= (int) $m['checkout'] ?></td>
+                        <td><?= $match->playedAt->format('Y-m-d') ?></td>
+                        <td>
+                            <a href="/tournaments/<?= $match->tournamentId ?>"><?= htmlspecialchars($match->tournamentName) ?></a>
+                        </td>
+                        <td>
+                            <?php if ($match->opponentId !== null): ?>
+                                <a href="/players/<?= $match->opponentId ?>"><?= htmlspecialchars($match->opponentName ?? '') ?></a>
+                            <?php else: ?>
+                                –
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <strong><?= $match->score() ?></strong>
+                            <span class="badge badge--result-<?= $match->won ? 'win' : 'loss' ?>"><?= $t($match->won ? 'profile.win' : 'profile.loss') ?></span>
+                        </td>
+                        <td><?= $match->threeDartAverage !== null ? number_format($match->threeDartAverage, 1) : '–' ?></td>
+                        <td><?= $match->count180s ?? '–' ?></td>
+                        <td><?= $match->highestCheckout ?? '–' ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
