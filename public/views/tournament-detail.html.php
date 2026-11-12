@@ -1,23 +1,23 @@
 <article>
-    <h1><?= htmlspecialchars($tournament['name']) ?></h1>
+    <h1><?= htmlspecialchars($tournament->name) ?></h1>
 
     <section class="card mb-lg">
         <h2><?= $t('tournament.info') ?></h2>
         <dl>
             <dt><?= $t('tournament.format') ?></dt>
-            <dd><?= htmlspecialchars($tournament['format']) ?></dd>
+            <dd><?= htmlspecialchars($tournament->format()) ?></dd>
 
             <dt><?= $t('tournament.date') ?></dt>
-            <dd><?= htmlspecialchars($tournament['date']) ?></dd>
+            <dd><?= $tournament->startsAt->format('Y-m-d H:i') ?></dd>
 
             <dt><?= $t('tournament.location') ?></dt>
-            <dd><?= htmlspecialchars($tournament['location']) ?></dd>
+            <dd><?= htmlspecialchars($tournament->location) ?></dd>
 
             <dt><?= $t('tournament.status') ?></dt>
-            <dd><span class="badge badge--status-<?= htmlspecialchars($tournament['status']) ?>"><?= $t('status.' . $tournament['status']) ?></span></dd>
+            <dd><span class="badge badge--status-<?= $tournament->status->value ?>"><?= $t('status.' . $tournament->status->value) ?></span></dd>
 
-            <dt><?= $t('tournament.max_players') ?></dt>
-            <dd><?= (int) $tournament['maxPlayers'] ?></dd>
+            <dt><?= $t('tournament.registered') ?></dt>
+            <dd><?= $tournament->registeredPlayers ?> / <?= $tournament->maxPlayers ?></dd>
         </dl>
 
         <button type="button" id="btn-register" class="btn btn--primary"><?= $t('tournament.register') ?></button>
@@ -39,9 +39,9 @@
             <tbody>
                 <?php foreach ($players as $p): ?>
                     <tr>
-                        <td class="rank-cell"><?= (int) $p['seed'] ?></td>
-                        <td><?= htmlspecialchars($p['name']) ?></td>
-                        <td><?= number_format($p['avg'], 1) ?></td>
+                        <td class="rank-cell"><?= $p->seed ?? '–' ?></td>
+                        <td><?= htmlspecialchars($p->displayName) ?></td>
+                        <td><?= $p->threeDartAverage !== null ? number_format($p->threeDartAverage, 1) : '–' ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -53,22 +53,26 @@
 
 <section>
     <h2><?= $t('bracket.title') ?></h2>
-    <div class="bracket">
-        <?php foreach ($bracket as $roundKey => $matches): ?>
-            <section class="bracket__round" aria-labelledby="round-<?= htmlspecialchars($roundKey) ?>">
-                <h3 id="round-<?= htmlspecialchars($roundKey) ?>"><?= $t('bracket.round.' . $roundKey) ?></h3>
-                <?php foreach ($matches as $match): ?>
-                    <?php require __DIR__ . '/partials/match-card.html.php'; ?>
-                <?php endforeach; ?>
-            </section>
-        <?php endforeach; ?>
-    </div>
+    <?php if (!empty($rounds)): ?>
+        <div class="bracket">
+            <?php foreach ($rounds as $round): ?>
+                <section class="bracket__round" aria-labelledby="round-<?= $round['number'] ?>">
+                    <h3 id="round-<?= $round['number'] ?>"><?= htmlspecialchars($round['label']) ?></h3>
+                    <?php foreach ($round['matches'] as $match): ?>
+                        <?php require __DIR__ . '/partials/match-card.html.php'; ?>
+                    <?php endforeach; ?>
+                </section>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <p><?= $t('bracket.empty') ?></p>
+    <?php endif; ?>
 </section>
 
 <section>
     <h2><?= $t('result.title') ?></h2>
     <form id="match-result-form" class="card">
-        <input type="hidden" name="tournament_id" value="<?= (int) $tournament['id'] ?>">
+        <input type="hidden" name="tournament_id" value="<?= $tournament->id ?>">
 
         <label for="match_id"><?= $t('result.match_id') ?></label>
         <input type="number" id="match_id" name="match_id" required min="1">

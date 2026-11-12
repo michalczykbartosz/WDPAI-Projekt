@@ -53,19 +53,19 @@ $statusFilters = ['open', 'ongoing', 'finished'];
                 <?php foreach ($tournaments as $tournament): ?>
                     <tr>
                         <td>
-                            <a href="/tournaments/<?= (int) $tournament['id'] ?>">
-                                <?= htmlspecialchars($tournament['name']) ?>
+                            <a href="/tournaments/<?= $tournament->id ?>">
+                                <?= htmlspecialchars($tournament->name) ?>
                             </a>
                         </td>
-                        <td><?= htmlspecialchars($tournament['format']) ?></td>
-                        <td><?= htmlspecialchars($tournament['date']) ?></td>
-                        <td><?= htmlspecialchars($tournament['location']) ?></td>
-                        <td><?= (int) $tournament['registeredPlayers'] ?> / <?= (int) $tournament['maxPlayers'] ?></td>
+                        <td><?= htmlspecialchars($tournament->format()) ?></td>
+                        <td><?= $tournament->startsAt->format('Y-m-d') ?></td>
+                        <td><?= htmlspecialchars($tournament->location) ?></td>
+                        <td><?= $tournament->registeredPlayers ?> / <?= $tournament->maxPlayers ?></td>
                         <td>
-                            <span class="badge badge--status-<?= htmlspecialchars($tournament['status']) ?>"><?= $t('status.' . $tournament['status']) ?></span>
+                            <span class="badge badge--status-<?= $tournament->status->value ?>"><?= $t('status.' . $tournament->status->value) ?></span>
                         </td>
                         <td>
-                            <a href="/tournaments/<?= (int) $tournament['id'] ?>" class="btn btn--secondary"><?= $t('tournaments.details') ?></a>
+                            <a href="/tournaments/<?= $tournament->id ?>" class="btn btn--secondary"><?= $t('tournaments.details') ?></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

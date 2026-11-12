@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App;
 
 
-use App\Controller\AppController;
-
 
 final class Routing
 {
     private array $routes = [];
+
+    public function __construct(private readonly Container $container)
+    {
+    }
 
     public function get(string $path, string $controller, string $action): void
     {
@@ -84,13 +86,7 @@ final class Routing
                 $parameters,
             );
 
-            $controllerClass = $route['controller'];
-            $controller = new $controllerClass();
-
-            if (!$controller instanceof AppController) {
-                throw new \RuntimeException('Invalid controller');
-            }
-
+            $controller = $this->container->controller($route['controller']);
             $controller->{$route['action']}(...$parameters);
 
             return true;

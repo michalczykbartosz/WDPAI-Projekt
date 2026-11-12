@@ -26,6 +26,20 @@ abstract class AppController
         $this->translator = new Translator($locale, self::LANG_DIR);
     }
 
+    public function notFound(): void
+    {
+        http_response_code(404);
+
+        $this->render('not-found', [
+            'pageTitle' => $this->translator->get('title.not_found'),
+            'suggestedLinks' => [
+                ['url' => '/', 'label' => 'nav.home'],
+                ['url' => '/tournaments', 'label' => 'nav.tournaments'],
+                ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
+            ],
+        ]);
+    }
+
     protected function render(string $template, array $variables = []): void
     {
         $variables = array_merge(self::LAYOUT_DEFAULTS, $variables);

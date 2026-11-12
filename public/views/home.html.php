@@ -11,10 +11,10 @@
     <?php if (!empty($upcomingTournaments)): ?>
         <div class="cards-grid">
             <?php foreach ($upcomingTournaments as $tournament): ?>
-                <a href="/tournaments/<?= (int) $tournament['id'] ?>" class="card card--link">
-                    <h3 class="card__title"><?= htmlspecialchars($tournament['name']) ?></h3>
-                    <p class="card__meta">📅 <?= htmlspecialchars($tournament['date']) ?></p>
-                    <span class="badge badge--status-<?= htmlspecialchars($tournament['status']) ?>"><?= $t('status.' . $tournament['status']) ?></span>
+                <a href="/tournaments/<?= $tournament->id ?>" class="card card--link">
+                    <h3 class="card__title"><?= htmlspecialchars($tournament->name) ?></h3>
+                    <p class="card__meta">📅 <?= $tournament->startsAt->format('Y-m-d') ?></p>
+                    <span class="badge badge--status-<?= $tournament->status->value ?>"><?= $t('status.' . $tournament->status->value) ?></span>
                 </a>
             <?php endforeach; ?>
         </div>

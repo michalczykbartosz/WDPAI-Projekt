@@ -4,95 +4,41 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\GameMatch;
+use App\Model\TournamentStatus;
+use App\Repository\TournamentRepositoryInterface;
+
 final class TournamentController extends AppController
 {
+    public function __construct(private readonly TournamentRepositoryInterface $tournaments)
+    {
+        parent::__construct();
+    }
+
     public function index(): void
     {
-        $tournaments = [
-            [
-                'id' => 1,
-                'name' => 'Puchar Krakowa 2026',
-                'format' => '501 Double Out',
-                'date' => '2026-11-15',
-                'status' => 'open',
-                'maxPlayers' => 16,
-                'registeredPlayers' => 9,
-                'location' => 'Kraków, Dart Arena',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Liga Zimowa – Runda 1',
-                'format' => '501 Double Out',
-                'date' => '2026-12-01',
-                'status' => 'open',
-                'maxPlayers' => 8,
-                'registeredPlayers' => 5,
-                'location' => 'Warszawa, Bull\'s Eye Pub',
-            ],
-            [
-                'id' => 3,
-                'name' => 'Turniej Mikołajkowy',
-                'format' => '301 Double Out',
-                'date' => '2026-12-06',
-                'status' => 'finished',
-                'maxPlayers' => 8,
-                'registeredPlayers' => 8,
-                'location' => 'Gdańsk, Triple Twenty Club',
-            ],
-        ];
-
         $this->render('tournaments', [
             'pageTitle' => $this->translator->get('title.tournaments'),
             'activePage' => 'tournaments',
-            'tournaments' => $tournaments,
+            'tournaments' => $this->tournaments->findPublished(),
         ]);
     }
 
     public function show(int $id): void
     {
-        $tournament = [
-            'id' => $id,
-            'name' => 'Puchar Krakowa 2026',
-            'format' => '501 Double Out',
-            'date' => '2026-11-15',
-            'status' => 'ongoing',
-            'location' => 'Kraków, Dart Arena',
-            'maxPlayers' => 8,
-        ];
+        $tournament = $this->tournaments->findById($id);
 
-        $players = [
-            ['seed' => 1, 'name' => 'Jan Kowalski', 'avg' => 85.4],
-            ['seed' => 2, 'name' => 'Adam Nowak', 'avg' => 78.2],
-            ['seed' => 3, 'name' => 'Piotr Wiśniewski', 'avg' => 91.0],
-            ['seed' => 4, 'name' => 'Krzysztof Zieliński', 'avg' => 72.6],
-            ['seed' => 5, 'name' => 'Tomasz Lewandowski', 'avg' => 88.1],
-            ['seed' => 6, 'name' => 'Marcin Wójcik', 'avg' => 69.3],
-            ['seed' => 7, 'name' => 'Paweł Kamiński', 'avg' => 80.5],
-            ['seed' => 8, 'name' => 'Łukasz Szymański', 'avg' => 74.9],
-        ];
-
-        $bracket = [
-            'quarterfinals' => [
-                ['id' => 101, 'player1' => 'Jan Kowalski', 'player2' => 'Łukasz Szymański', 'score1' => 3, 'score2' => 1, 'status' => 'finished'],
-                ['id' => 102, 'player1' => 'Piotr Wiśniewski', 'player2' => 'Marcin Wójcik', 'score1' => 3, 'score2' => 0, 'status' => 'finished'],
-                ['id' => 103, 'player1' => 'Tomasz Lewandowski', 'player2' => 'Krzysztof Zieliński', 'score1' => 2, 'score2' => 3, 'status' => 'finished'],
-                ['id' => 104, 'player1' => 'Adam Nowak', 'player2' => 'Paweł Kamiński', 'score1' => null, 'score2' => null, 'status' => 'pending'],
-            ],
-            'semifinals' => [
-                ['id' => 201, 'player1' => 'Jan Kowalski', 'player2' => 'Piotr Wiśniewski', 'score1' => null, 'score2' => null, 'status' => 'pending'],
-                ['id' => 202, 'player1' => 'Krzysztof Zieliński', 'player2' => null, 'score1' => null, 'score2' => null, 'status' => 'pending'],
-            ],
-            'final' => [
-                ['id' => 301, 'player1' => null, 'player2' => null, 'score1' => null, 'score2' => null, 'status' => 'pending'],
-            ],
-        ];
+        if ($tournament === null || $tournament->status === TournamentStatus::Draft) {
+            $this->notFound();
+            return;
+        }
 
         $this->render('tournament-detail', [
-            'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament['name']]),
+            'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament->name]),
             'activePage' => 'tournaments',
             'tournament' => $tournament,
-            'players' => $players,
-            'bracket' => $bracket,
+            'players' => $this->tournaments->findParticipants($id),
+            'rounds' => $this->groupByRound($this->tournaments->findMatches($id), $tournament->maxPlayers),
         ]);
     }
 
@@ -105,5 +51,36 @@ final class TournamentController extends AppController
             'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
             'maxPlayersOptions' => [4, 8, 16],
         ]);
+    }
+
+    /**
+     * @param list<GameMatch> $matches
+     * @return list<array{number: int, label: string, matches: list<GameMatch>}>
+     */
+    private function groupByRound(array $matches, int $maxPlayers): array
+    {
+        $totalRounds = (int) log($maxPlayers, 2);
+        $rounds = [];
+
+        foreach ($matches as $match) {
+            $rounds[$match->round] ??= [
+                'number' => $match->round,
+                'label' => $this->roundLabel($match->round, $totalRounds),
+                'matches' => [],
+            ];
+            $rounds[$match->round]['matches'][] = $match;
+        }
+
+        return array_values($rounds);
+    }
+
+    private function roundLabel(int $round, int $totalRounds): string
+    {
+        return match ($totalRounds - $round) {
+            0 => $this->translator->get('bracket.round.final'),
+            1 => $this->translator->get('bracket.round.semifinals'),
+            2 => $this->translator->get('bracket.round.quarterfinals'),
+            default => $this->translator->get('bracket.round.number', ['number' => $round]),
+        };
     }
 }
