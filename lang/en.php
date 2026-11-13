@@ -21,6 +21,7 @@ return [
     // Page titles
     'title.home' => 'DartArena – Darts tournament platform',
     'title.not_found' => '404 – Page not found – DartArena',
+    'title.bad_request' => '400 – Bad request – DartArena',
     'title.tournaments' => 'Tournaments – DartArena',
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Create tournament – Organizer panel',
@@ -67,9 +68,10 @@ return [
     'leaderboard.description' => 'The ranking is calculated from aggregated statistics across all tournaments.',
     'leaderboard.empty' => 'No leaderboard data to display.',
 
-    // 404
+    // Error pages
     'not_found.message' => 'Sorry, the page you are looking for does not exist or has been removed.',
-    'not_found.suggestions' => 'Maybe you are looking for:',
+    'bad_request.message' => 'The request contains invalid data, e.g. a malformed identifier in the address.',
+    'error.suggestions' => 'Maybe you are looking for:',
 
     // Tournament list
     'tournaments.title' => 'Tournament explorer',

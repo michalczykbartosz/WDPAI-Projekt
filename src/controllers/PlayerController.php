@@ -22,10 +22,17 @@ final class PlayerController extends AppController
         ]);
     }
 
-    public function profile(int $id): void
+    public function profile(string $id): void
     {
-        $profile = $this->players->findProfile($id);
-        $stats = $this->players->findStats($id);
+        $playerId = $this->parseId($id);
+
+        if ($playerId === null) {
+            $this->badRequest();
+            return;
+        }
+
+        $profile = $this->players->findProfile($playerId);
+        $stats = $this->players->findStats($playerId);
 
         if ($profile === null || $stats === null) {
             $this->notFound();
@@ -36,7 +43,7 @@ final class PlayerController extends AppController
             'pageTitle' => $this->translator->get('title.profile', ['name' => $profile->displayName]),
             'profile' => $profile,
             'stats' => $stats,
-            'recentMatches' => $this->players->findRecentMatches($id),
+            'recentMatches' => $this->players->findRecentMatches($playerId),
         ]);
     }
 }

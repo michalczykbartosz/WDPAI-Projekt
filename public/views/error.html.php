@@ -1,10 +1,10 @@
 <div class="error-page">
-    <h1>404</h1>
-    <p><?= $t('not_found.message') ?></p>
+    <h1><?= $statusCode ?></h1>
+    <p><?= $t($errorKey . '.message') ?></p>
 
     <?php if (!empty($suggestedLinks)): ?>
         <nav>
-            <h2><?= $t('not_found.suggestions') ?></h2>
+            <h2><?= $t('error.suggestions') ?></h2>
             <ul>
                 <?php foreach ($suggestedLinks as $link): ?>
                     <li>

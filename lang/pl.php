@@ -21,6 +21,7 @@ return [
     // Tytuły stron
     'title.home' => 'DartArena – Platforma turniejów darta',
     'title.not_found' => '404 – Nie znaleziono strony – DartArena',
+    'title.bad_request' => '400 – Nieprawidłowe żądanie – DartArena',
     'title.tournaments' => 'Turnieje – DartArena',
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Utwórz turniej – Panel organizatora',
@@ -67,9 +68,10 @@ return [
     'leaderboard.description' => 'Ranking wyliczany na podstawie zagregowanych statystyk ze wszystkich turniejów.',
     'leaderboard.empty' => 'Brak danych do wyświetlenia rankingu.',
 
-    // 404
+    // Strony błędów
     'not_found.message' => 'Przepraszamy, szukana strona nie istnieje lub została usunięta.',
-    'not_found.suggestions' => 'Może szukasz:',
+    'bad_request.message' => 'Żądanie zawiera nieprawidłowe dane, np. błędny identyfikator w adresie.',
+    'error.suggestions' => 'Może szukasz:',
 
     // Lista turniejów
     'tournaments.title' => 'Eksplorator turniejów',

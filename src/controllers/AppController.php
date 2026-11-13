@@ -28,16 +28,28 @@ abstract class AppController
 
     public function notFound(): void
     {
-        http_response_code(404);
+        $this->renderError(404, 'not_found');
+    }
 
-        $this->render('not-found', [
-            'pageTitle' => $this->translator->get('title.not_found'),
-            'suggestedLinks' => [
-                ['url' => '/', 'label' => 'nav.home'],
-                ['url' => '/tournaments', 'label' => 'nav.tournaments'],
-                ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
-            ],
-        ]);
+    protected function badRequest(): void
+    {
+        $this->renderError(400, 'bad_request');
+    }
+
+    /**
+     * Zamienia identyfikator z adresu na dodatnią liczbę całkowitą.
+     * Zwraca null dla wartości typu "abc", "0", "-5", "+5", "1.5" albo liczby
+     * większej niż PHP_INT_MAX.
+     */
+    protected function parseId(string $value): ?int
+    {
+        if (!ctype_digit($value)) {
+            return null;
+        }
+
+        $id = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        return $id === false ? null : $id;
     }
 
     protected function render(string $template, array $variables = []): void
@@ -50,6 +62,22 @@ abstract class AppController
         $variables['content'] = $this->renderTemplate($template, $variables);
 
         echo $this->renderTemplate('layout', $variables);
+    }
+
+    private function renderError(int $statusCode, string $errorKey): void
+    {
+        http_response_code($statusCode);
+
+        $this->render('error', [
+            'pageTitle' => $this->translator->get('title.' . $errorKey),
+            'statusCode' => $statusCode,
+            'errorKey' => $errorKey,
+            'suggestedLinks' => [
+                ['url' => '/', 'label' => 'nav.home'],
+                ['url' => '/tournaments', 'label' => 'nav.tournaments'],
+                ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
+            ],
+        ]);
     }
 
     /**

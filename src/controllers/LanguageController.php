@@ -14,7 +14,7 @@ final class LanguageController extends AppController
         $locale = $_POST['locale'] ?? '';
 
         if (!is_string($locale) || !Translator::isSupported($locale)) {
-            http_response_code(400);
+            $this->badRequest();
             return;
         }
 

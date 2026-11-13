@@ -41,7 +41,8 @@ final class Routing
 	/* 
 	Funkcja dzieli ścieżkę na fragmenty. Zwykłe fragmenty pozostawia bez zmian, 
 	a fragment zapisany w klamrach, na przykład {id}, zamienia na nazwany 
-	parametr przyjmujący cyfry. Następnie ponownie składa ścieżkę w wyrażenie regularne.
+	parametr przyjmujący dowolny tekst bez ukośnika. Format wartości sprawdza kontroler,
+	dzięki czemu może odpowiedzieć 400 (zły format) albo 404 (brak rekordu).
 	*/
     private function createPattern(string $path): string
     {
@@ -50,7 +51,7 @@ final class Routing
         foreach ($parts as &$part) {
             if (str_starts_with($part, '{') && str_ends_with($part, '}')) {
                 $parameterName = trim($part, '{}');
-                $part = '(?P<' . $parameterName . '>\d+)';
+                $part = '(?P<' . $parameterName . '>[^/]+)';
                 continue;
             }
 
@@ -78,12 +79,6 @@ final class Routing
                 $matches,
                 static fn (int|string $key): bool => is_string($key),
                 ARRAY_FILTER_USE_KEY,
-            );
-
-            $parameters = array_map(
-                static fn (string $value): int|string =>
-                    ctype_digit($value) ? (int) $value : $value,
-                $parameters,
             );
 
             $controller = $this->container->controller($route['controller']);

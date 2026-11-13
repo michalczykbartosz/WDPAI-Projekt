@@ -24,9 +24,16 @@ final class TournamentController extends AppController
         ]);
     }
 
-    public function show(int $id): void
+    public function show(string $id): void
     {
-        $tournament = $this->tournaments->findById($id);
+        $tournamentId = $this->parseId($id);
+
+        if ($tournamentId === null) {
+            $this->badRequest();
+            return;
+        }
+
+        $tournament = $this->tournaments->findById($tournamentId);
 
         if ($tournament === null || $tournament->status === TournamentStatus::Draft) {
             $this->notFound();
@@ -37,8 +44,8 @@ final class TournamentController extends AppController
             'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament->name]),
             'activePage' => 'tournaments',
             'tournament' => $tournament,
-            'players' => $this->tournaments->findParticipants($id),
-            'rounds' => $this->groupByRound($this->tournaments->findMatches($id), $tournament->maxPlayers),
+            'players' => $this->tournaments->findParticipants($tournamentId),
+            'rounds' => $this->groupByRound($this->tournaments->findMatches($tournamentId), $tournament->maxPlayers),
         ]);
     }
 
