@@ -8,6 +8,8 @@ use DateTimeImmutable;
 
 final readonly class Tournament
 {
+    public const STARTING_SCORES = [301, 501];
+
     public function __construct(
         public int $id,
         public int $organizerId,

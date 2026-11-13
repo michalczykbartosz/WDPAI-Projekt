@@ -20,7 +20,7 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
         LEFT JOIN tournament_participants tp ON tp.tournament_id = t.id
         SQL;
 
-    public function findPublished(?TournamentStatus $status = null): array
+    public function findPublished(?TournamentStatus $status = null, ?int $startingScore = null): array
     {
         $sql = self::SELECT_TOURNAMENT . " WHERE t.status <> 'draft'";
         $parameters = [];
@@ -28,6 +28,11 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
         if ($status !== null) {
             $sql .= ' AND t.status = :status';
             $parameters['status'] = $status->value;
+        }
+
+        if ($startingScore !== null) {
+            $sql .= ' AND t.starting_score = :starting_score';
+            $parameters['starting_score'] = $startingScore;
         }
 
         $sql .= ' GROUP BY t.id ORDER BY t.starts_at';

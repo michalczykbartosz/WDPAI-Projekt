@@ -12,7 +12,7 @@ use App\Model\TournamentStatus;
 interface TournamentRepositoryInterface
 {
     /** @return list<Tournament> */
-    public function findPublished(?TournamentStatus $status = null): array;
+    public function findPublished(?TournamentStatus $status = null, ?int $startingScore = null): array;
 
     public function findById(int $id): ?Tournament;
 

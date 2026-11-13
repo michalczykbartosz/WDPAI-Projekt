@@ -1,12 +1,3 @@
-<?php
-$formatFilters = [
-    '501do' => '501 Double Out',
-    '301do' => '301 Double Out',
-    '501so' => '501 Single Out',
-];
-
-$statusFilters = ['open', 'ongoing', 'finished'];
-?>
 <h1><?= $t('tournaments.title') ?></h1>
 
 <section>
@@ -15,8 +6,8 @@ $statusFilters = ['open', 'ongoing', 'finished'];
             <label for="format"><?= $t('filter.format') ?></label>
             <select name="format" id="format">
                 <option value=""><?= $t('filter.all') ?></option>
-                <?php foreach ($formatFilters as $value => $label): ?>
-                    <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($label) ?></option>
+                <?php foreach ($formatOptions as $startingScore): ?>
+                    <option value="<?= $startingScore ?>"<?= (string) $startingScore === $selectedFormat ? ' selected' : '' ?>><?= $startingScore ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -25,8 +16,8 @@ $statusFilters = ['open', 'ongoing', 'finished'];
             <label for="status"><?= $t('filter.status') ?></label>
             <select name="status" id="status">
                 <option value=""><?= $t('filter.all') ?></option>
-                <?php foreach ($statusFilters as $status): ?>
-                    <option value="<?= htmlspecialchars($status) ?>"><?= $t('status.' . $status) ?></option>
+                <?php foreach ($statusOptions as $status): ?>
+                    <option value="<?= $status->value ?>"<?= $status->value === $selectedStatus ? ' selected' : '' ?>><?= $t('status.' . $status->value) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
