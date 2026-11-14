@@ -43,6 +43,8 @@ final class Routing
 	a fragment zapisany w klamrach, na przykład {id}, zamienia na nazwany 
 	parametr przyjmujący dowolny tekst bez ukośnika. Format wartości sprawdza kontroler,
 	dzięki czemu może odpowiedzieć 400 (zły format) albo 404 (brak rekordu).
+	Zapis {nazwa:wzorzec}, np. {code:[A-Z0-9]{6}}, ustawia własne wyrażenie regularne;
+	adres niepasujący do wzorca nie trafia do tej trasy.
 	*/
     private function createPattern(string $path): string
     {
@@ -50,8 +52,8 @@ final class Routing
 
         foreach ($parts as &$part) {
             if (str_starts_with($part, '{') && str_ends_with($part, '}')) {
-                $parameterName = trim($part, '{}');
-                $part = '(?P<' . $parameterName . '>[^/]+)';
+                [$parameterName, $parameterPattern] = array_pad(explode(':', substr($part, 1, -1), 2), 2, '[^/]+');
+                $part = '(?P<' . $parameterName . '>' . $parameterPattern . ')';
                 continue;
             }
 

@@ -48,20 +48,12 @@ final class TournamentController extends AppController
             return;
         }
 
-        $tournament = $this->tournaments->findById($tournamentId);
+        $this->renderTournament($this->tournaments->findById($tournamentId));
+    }
 
-        if ($tournament === null || $tournament->status === TournamentStatus::Draft) {
-            $this->notFound();
-            return;
-        }
-
-        $this->render('tournament-detail', [
-            'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament->name]),
-            'activePage' => 'tournaments',
-            'tournament' => $tournament,
-            'players' => $this->tournaments->findParticipants($tournamentId),
-            'rounds' => $this->groupByRound($this->tournaments->findMatches($tournamentId), $tournament->maxPlayers),
-        ]);
+    public function showByCode(string $code): void
+    {
+        $this->renderTournament($this->tournaments->findByInviteCode($code));
     }
 
     public function create(): void
@@ -72,6 +64,22 @@ final class TournamentController extends AppController
             'userRole' => 'organizer',
             'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
             'maxPlayersOptions' => [4, 8, 16],
+        ]);
+    }
+
+    private function renderTournament(?Tournament $tournament): void
+    {
+        if ($tournament === null || $tournament->status === TournamentStatus::Draft) {
+            $this->notFound();
+            return;
+        }
+
+        $this->render('tournament-detail', [
+            'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament->name]),
+            'activePage' => 'tournaments',
+            'tournament' => $tournament,
+            'players' => $this->tournaments->findParticipants($tournament->id),
+            'rounds' => $this->groupByRound($this->tournaments->findMatches($tournament->id), $tournament->maxPlayers),
         ]);
     }
 
