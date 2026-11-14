@@ -18,7 +18,7 @@ final class LanguageController extends AppController
             return;
         }
 
-        (new LocalePreference())->change($locale);
+        (new LocalePreference($this->session))->change($locale);
 
         header('Location: ' . $this->safeRedirectTarget($_POST['redirect'] ?? null), true, 303);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\SessionManager;
 use App\Service\LocalePreference;
 use App\Service\Translator;
 
@@ -18,11 +19,13 @@ abstract class AppController
         'userRole' => 'player',
     ];
 
+    protected readonly SessionManager $session;
     protected readonly Translator $translator;
 
     public function __construct()
     {
-        $locale = (new LocalePreference())->current();
+        $this->session = new SessionManager();
+        $locale = (new LocalePreference($this->session))->current();
         $this->translator = new Translator($locale, self::LANG_DIR);
     }
 

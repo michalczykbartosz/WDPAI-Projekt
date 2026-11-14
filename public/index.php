@@ -8,14 +8,11 @@ use App\Controller\PlayerController;
 use App\Controller\TournamentController;
 use App\Container;
 use App\Routing;
+use App\Security\SessionManager;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-session_start([
-    'cookie_httponly' => true,
-    'cookie_samesite' => 'Lax',
-    'use_strict_mode' => true,
-]);
+(new SessionManager())->start();
 
 $container = new Container();
 $routing = new Routing($container);
