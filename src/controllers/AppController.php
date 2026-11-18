@@ -45,6 +45,26 @@ abstract class AppController
         $this->renderError(400, 'bad_request');
     }
 
+    protected function redirect(string $path): void
+    {
+        header('Location: ' . $path, true, 303);
+    }
+
+    /**
+     * Zwraca pole tekstowe z formularza. Wartości innego typu (np. tablice
+     * podesłane jako pole[]) traktujemy jak puste.
+     */
+    protected function postString(string $name, bool $trim = true): string
+    {
+        $value = $_POST[$name] ?? '';
+
+        if (!is_string($value)) {
+            return '';
+        }
+
+        return $trim ? trim($value) : $value;
+    }
+
     /**
      * Zamienia identyfikator z adresu na dodatnią liczbę całkowitą.
      * Zwraca null dla wartości typu "abc", "0", "-5", "+5", "1.5" albo liczby
@@ -66,6 +86,7 @@ abstract class AppController
         $variables = array_merge(self::LAYOUT_DEFAULTS, $variables);
         $variables['locale'] = $this->translator->locale();
         $variables['csrfToken'] = (new CsrfTokenManager($this->session))->token();
+        $variables['flashMessage'] = $this->session->pullFlash();
         $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
         $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();

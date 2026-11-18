@@ -407,6 +407,30 @@ textarea {
     resize: vertical;
 }
 
+/* Błędy walidacji i komunikaty */
+.form-narrow {
+    max-width: 480px;
+}
+
+.form-error {
+    margin-top: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+}
+
+input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+}
+
+.flash {
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md) var(--space-lg);
+    border-left: 4px solid var(--color-brand);
+    border-radius: var(--radius-md);
+    background: var(--color-brand-subtle);
+    color: var(--color-text-primary);
+}
+
 /* Przyciski */
 .btn,
 button[type="submit"],

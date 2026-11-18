@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Controller\AppController;
+use App\Controller\AuthController;
 use App\Controller\DefaultController;
 use App\Controller\PlayerController;
 use App\Controller\TournamentController;
@@ -12,10 +13,13 @@ use App\Database\Database;
 use App\Database\DatabaseConfig;
 use App\Repository\PdoPlayerRepository;
 use App\Repository\PdoTournamentRepository;
+use App\Repository\PdoUserRepository;
 use App\Repository\PlayerRepositoryInterface;
 use App\Repository\TournamentRepositoryInterface;
 use App\Security\CsrfTokenManager;
 use App\Security\SessionManager;
+use App\Service\RegistrationService;
+use App\Service\RegistrationValidator;
 
 final class Container
 {
@@ -31,6 +35,9 @@ final class Container
             DefaultController::class => new DefaultController($this->tournamentRepository(), $this->playerRepository()),
             TournamentController::class => new TournamentController($this->tournamentRepository()),
             PlayerController::class => new PlayerController($this->playerRepository()),
+            AuthController::class => new AuthController(
+                new RegistrationService(new RegistrationValidator(), new PdoUserRepository($this->database())),
+            ),
             default => new $controllerClass(),
         };
     }

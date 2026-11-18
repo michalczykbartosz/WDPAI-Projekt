@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Controller\AuthController;
 use App\Controller\DefaultController;
 use App\Controller\LanguageController;
 use App\Controller\PlayerController;
@@ -28,6 +29,10 @@ $routing->get('/organizer/create', TournamentController::class, 'create');
 // Gracze – ranking globalny, profil z parametrem {id}
 $routing->get('/leaderboard', PlayerController::class, 'leaderboard');
 $routing->get('/players/{id}', PlayerController::class, 'profile');
+
+// Konta użytkowników
+$routing->get('/register', AuthController::class, 'showRegistrationForm');
+$routing->post('/register', AuthController::class, 'register');
 
 // Zmiana języka interfejsu (zapis w sesji)
 $routing->post('/language', LanguageController::class, 'change');

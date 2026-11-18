@@ -3,6 +3,7 @@ $navLinks = [
     'tournaments' => ['url' => '/tournaments', 'label' => 'nav.tournaments'],
     'leaderboard' => ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
     'organizer' => ['url' => '/organizer/create', 'label' => 'nav.organizer'],
+    'register' => ['url' => '/register', 'label' => 'nav.register'],
 ];
 
 $roles = ['player', 'organizer'];

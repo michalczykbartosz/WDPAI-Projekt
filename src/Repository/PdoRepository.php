@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Database\Database;
+use PDOStatement;
 
 abstract class PdoRepository
 {
@@ -18,10 +19,7 @@ abstract class PdoRepository
      */
     protected function fetchAll(string $sql, array $parameters = []): array
     {
-        $statement = $this->database->connection()->prepare($sql);
-        $statement->execute($parameters);
-
-        return $statement->fetchAll();
+        return $this->execute($sql, $parameters)->fetchAll();
     }
 
     /**
@@ -31,6 +29,39 @@ abstract class PdoRepository
     protected function fetchOne(string $sql, array $parameters = []): ?array
     {
         return $this->fetchAll($sql, $parameters)[0] ?? null;
+    }
+
+    /** @param array<string, int|string> $parameters */
+    protected function execute(string $sql, array $parameters = []): PDOStatement
+    {
+        $statement = $this->database->connection()->prepare($sql);
+        $statement->execute($parameters);
+
+        return $statement;
+    }
+
+    /**
+     * Wykonuje operację w transakcji: wszystkie zapytania zapisują się razem
+     * albo żadne (rollBack przy dowolnym błędzie).
+     *
+     * @template T
+     * @param callable(): T $operation
+     * @return T
+     */
+    protected function transaction(callable $operation): mixed
+    {
+        $connection = $this->database->connection();
+        $connection->beginTransaction();
+
+        try {
+            $result = $operation();
+            $connection->commit();
+
+            return $result;
+        } catch (\Throwable $exception) {
+            $connection->rollBack();
+            throw $exception;
+        }
     }
 
     protected static function nullableInt(mixed $value): ?int

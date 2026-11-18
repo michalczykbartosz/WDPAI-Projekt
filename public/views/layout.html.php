@@ -28,6 +28,9 @@
 
     <main>
         <div class="container">
+            <?php if ($flashMessage !== null): ?>
+                <p class="flash" role="status"><?= $t($flashMessage) ?></p>
+            <?php endif; ?>
 <?= $content ?>
         </div>
     </main>

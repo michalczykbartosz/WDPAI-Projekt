@@ -9,6 +9,7 @@ return [
     'nav.tournaments' => 'Tournaments',
     'nav.leaderboard' => 'Leaderboard',
     'nav.organizer' => 'Organizer panel',
+    'nav.register' => 'Sign up',
     'theme.to_light' => 'Switch to light theme',
     'theme.to_dark' => 'Switch to dark theme',
     'role.player' => 'Player',
@@ -27,6 +28,7 @@ return [
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Create tournament – Organizer panel',
     'title.leaderboard' => 'Player leaderboard – DartArena',
+    'title.register' => 'Sign up – DartArena',
     'title.profile' => '{name} – Profile – DartArena',
 
     // Home page
@@ -156,4 +158,22 @@ return [
     'organizer.location' => 'Location:',
     'organizer.location_placeholder' => 'e.g. Krakow, Dart Arena',
     'organizer.submit' => 'Create tournament',
+    // Registration
+    'register.title' => 'Create a player account',
+    'register.email' => 'Email address:',
+    'register.display_name' => 'Player name (shown in the leaderboard):',
+    'register.password' => 'Password (at least {min} characters):',
+    'register.password_confirmation' => 'Repeat password:',
+    'register.submit' => 'Sign up',
+    'flash.registered' => 'Your account has been created. You can now log in.',
+
+    // Form validation
+    'validation.required' => 'This field is required.',
+    'validation.email.invalid' => 'Enter a valid email address.',
+    'validation.email.taken' => 'An account with this email already exists.',
+    'validation.display_name.length' => 'The name must be 3 to 50 characters long.',
+    'validation.display_name.taken' => 'This player name is already taken.',
+    'validation.password.too_short' => 'The password must be at least 8 characters long.',
+    'validation.password.too_long' => 'The password is too long (maximum 72 bytes).',
+    'validation.password.mismatch' => 'The passwords do not match.',
 ];

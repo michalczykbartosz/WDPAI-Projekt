@@ -7,6 +7,7 @@ namespace App\Security;
 final class SessionManager
 {
     private const COOKIE_NAME = 'DARTARENA_SESSION';
+    private const FLASH_KEY = 'flash';
 
     public function start(): void
     {
@@ -49,6 +50,20 @@ final class SessionManager
     public function remove(string $key): void
     {
         unset($_SESSION[$key]);
+    }
+
+    /** Zapamiętuje komunikat, który zostanie pokazany raz, na następnej stronie. */
+    public function flash(string $messageKey): void
+    {
+        $this->set(self::FLASH_KEY, $messageKey);
+    }
+
+    public function pullFlash(): ?string
+    {
+        $messageKey = $this->get(self::FLASH_KEY);
+        $this->remove(self::FLASH_KEY);
+
+        return is_string($messageKey) ? $messageKey : null;
     }
 
     public function destroy(): void

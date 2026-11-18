@@ -9,6 +9,7 @@ return [
     'nav.tournaments' => 'Turnieje',
     'nav.leaderboard' => 'Ranking',
     'nav.organizer' => 'Panel organizatora',
+    'nav.register' => 'Rejestracja',
     'theme.to_light' => 'Przełącz na jasny motyw',
     'theme.to_dark' => 'Przełącz na ciemny motyw',
     'role.player' => 'Gracz',
@@ -27,6 +28,7 @@ return [
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Utwórz turniej – Panel organizatora',
     'title.leaderboard' => 'Ranking graczy – DartArena',
+    'title.register' => 'Rejestracja – DartArena',
     'title.profile' => '{name} – Profil – DartArena',
 
     // Strona główna
@@ -156,4 +158,22 @@ return [
     'organizer.location' => 'Lokalizacja:',
     'organizer.location_placeholder' => 'np. Kraków, Dart Arena',
     'organizer.submit' => 'Utwórz turniej',
+    // Rejestracja
+    'register.title' => 'Załóż konto zawodnika',
+    'register.email' => 'Adres e-mail:',
+    'register.display_name' => 'Nazwa zawodnika (widoczna w rankingu):',
+    'register.password' => 'Hasło (co najmniej {min} znaków):',
+    'register.password_confirmation' => 'Powtórz hasło:',
+    'register.submit' => 'Zarejestruj się',
+    'flash.registered' => 'Konto zostało utworzone. Możesz się teraz zalogować.',
+
+    // Walidacja formularzy
+    'validation.required' => 'To pole jest wymagane.',
+    'validation.email.invalid' => 'Podaj poprawny adres e-mail.',
+    'validation.email.taken' => 'Konto z tym adresem e-mail już istnieje.',
+    'validation.display_name.length' => 'Nazwa musi mieć od 3 do 50 znaków.',
+    'validation.display_name.taken' => 'Ta nazwa zawodnika jest już zajęta.',
+    'validation.password.too_short' => 'Hasło musi mieć co najmniej 8 znaków.',
+    'validation.password.too_long' => 'Hasło jest za długie (maksymalnie 72 bajty).',
+    'validation.password.mismatch' => 'Hasła nie są takie same.',
 ];
