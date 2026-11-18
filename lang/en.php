@@ -22,6 +22,7 @@ return [
     'title.home' => 'DartArena – Darts tournament platform',
     'title.not_found' => '404 – Page not found – DartArena',
     'title.bad_request' => '400 – Bad request – DartArena',
+    'title.forbidden' => '403 – Forbidden – DartArena',
     'title.tournaments' => 'Tournaments – DartArena',
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Create tournament – Organizer panel',
@@ -71,6 +72,7 @@ return [
     // Error pages
     'not_found.message' => 'Sorry, the page you are looking for does not exist or has been removed.',
     'bad_request.message' => 'The request contains invalid data, e.g. a malformed identifier in the address.',
+    'forbidden.message' => 'You cannot perform this action. If you were submitting a form, your session may have expired – refresh the page and try again.',
     'error.suggestions' => 'Maybe you are looking for:',
 
     // Tournament list

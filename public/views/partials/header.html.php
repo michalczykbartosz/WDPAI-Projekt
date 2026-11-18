@@ -18,6 +18,7 @@ $roles = ['player', 'organizer'];
         </ul>
         <div class="navbar__actions">
             <form action="/language" method="post" class="language-switcher" aria-label="<?= $t('language.label') ?>">
+                <?php require __DIR__ . '/csrf-field.html.php'; ?>
                 <input type="hidden" name="redirect" value="<?= htmlspecialchars($currentPath) ?>">
                 <?php foreach ($supportedLocales as $code): ?>
                     <button type="submit" name="locale" value="<?= htmlspecialchars($code) ?>"

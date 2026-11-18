@@ -33,6 +33,7 @@ $careerStats = [
                 <p class="text-muted"><?= $t('profile.member_since', ['date' => $profile->memberSince->format('Y-m-d')]) ?></p>
 
                 <form action="/players/<?= $profile->userId ?>/avatar" method="post" enctype="multipart/form-data" class="mt-md">
+                    <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
                     <label for="avatar"><?= $t('profile.change_avatar') ?></label>
                     <input type="file" id="avatar" name="avatar" accept="image/jpeg,image/png,image/webp">
                     <button type="submit" class="btn btn--secondary mt-sm"><?= $t('profile.upload') ?></button>

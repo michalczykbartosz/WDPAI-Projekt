@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\CsrfTokenManager;
 use App\Security\SessionManager;
 use App\Service\LocalePreference;
 use App\Service\Translator;
@@ -34,6 +35,11 @@ abstract class AppController
         $this->renderError(404, 'not_found');
     }
 
+    public function forbidden(): void
+    {
+        $this->renderError(403, 'forbidden');
+    }
+
     protected function badRequest(): void
     {
         $this->renderError(400, 'bad_request');
@@ -59,6 +65,7 @@ abstract class AppController
     {
         $variables = array_merge(self::LAYOUT_DEFAULTS, $variables);
         $variables['locale'] = $this->translator->locale();
+        $variables['csrfToken'] = (new CsrfTokenManager($this->session))->token();
         $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
         $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();

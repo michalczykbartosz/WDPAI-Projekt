@@ -8,13 +8,12 @@ use App\Controller\PlayerController;
 use App\Controller\TournamentController;
 use App\Container;
 use App\Routing;
-use App\Security\SessionManager;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-(new SessionManager())->start();
-
 $container = new Container();
+$container->session()->start();
+
 $routing = new Routing($container);
 
 // Strona główna

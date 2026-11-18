@@ -64,6 +64,13 @@ final class Routing
         return '~^' . implode('/', $parts) . '$~';
     }
 
+    private function hasValidCsrfToken(): bool
+    {
+        $csrf = $this->container->csrf();
+
+        return $csrf->isValid($csrf->tokenFromRequest());
+    }
+
     public function dispatch(string $method, string $uri): bool
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
@@ -84,6 +91,12 @@ final class Routing
             );
 
             $controller = $this->container->controller($route['controller']);
+
+            if ($method === 'POST' && !$this->hasValidCsrfToken()) {
+                $controller->forbidden();
+                return true;
+            }
+
             $controller->{$route['action']}(...$parameters);
 
             return true;

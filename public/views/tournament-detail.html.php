@@ -72,6 +72,7 @@
 <section>
     <h2><?= $t('result.title') ?></h2>
     <form id="match-result-form" class="card">
+        <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
         <input type="hidden" name="tournament_id" value="<?= $tournament->id ?>">
 
         <label for="match_id"><?= $t('result.match_id') ?></label>

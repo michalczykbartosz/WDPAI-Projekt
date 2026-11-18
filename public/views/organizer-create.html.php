@@ -1,6 +1,8 @@
 <h1><?= $t('organizer.title') ?></h1>
 
 <form action="/organizer/create" method="post" class="card">
+    <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
+
     <fieldset>
         <legend><?= $t('organizer.section.basic') ?></legend>
 
