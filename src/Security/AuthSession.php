@@ -29,6 +29,11 @@ final class AuthSession
         $this->session->set(self::DISPLAY_NAME, $user->displayName ?? $user->email);
     }
 
+    public function logOut(): void
+    {
+        $this->session->destroy();
+    }
+
     public function isLoggedIn(): bool
     {
         return $this->userId() !== null;

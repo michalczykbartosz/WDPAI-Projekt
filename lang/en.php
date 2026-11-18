@@ -11,6 +11,7 @@ return [
     'nav.organizer' => 'Organizer panel',
     'nav.register' => 'Sign up',
     'nav.login' => 'Log in',
+    'nav.logout' => 'Log out',
     'theme.to_light' => 'Switch to light theme',
     'theme.to_dark' => 'Switch to dark theme',
     'role.player' => 'Player',

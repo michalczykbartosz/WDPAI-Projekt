@@ -37,6 +37,10 @@ if ($currentUserName === null) {
             <?php if ($currentUserName !== null && $currentUserRole !== null): ?>
                 <span class="navbar__user"><?= htmlspecialchars($currentUserName) ?></span>
                 <span class="badge badge--<?= strtolower($currentUserRole->value) ?>"><?= $t('role.' . strtolower($currentUserRole->value)) ?></span>
+                <form action="/logout" method="post" class="logout-form">
+                    <?php require __DIR__ . '/csrf-field.html.php'; ?>
+                    <button type="submit" class="logout-form__button"><?= $t('nav.logout') ?></button>
+                </form>
             <?php endif; ?>
         </div>
     </div>

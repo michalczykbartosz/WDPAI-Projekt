@@ -11,6 +11,7 @@ return [
     'nav.organizer' => 'Panel organizatora',
     'nav.register' => 'Rejestracja',
     'nav.login' => 'Logowanie',
+    'nav.logout' => 'Wyloguj',
     'theme.to_light' => 'Przełącz na jasny motyw',
     'theme.to_dark' => 'Przełącz na ciemny motyw',
     'role.player' => 'Gracz',

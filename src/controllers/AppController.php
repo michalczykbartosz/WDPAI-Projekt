@@ -85,6 +85,11 @@ abstract class AppController
 
     protected function render(string $template, array $variables = []): void
     {
+        // Strony zawierają dane sesji (token CSRF, zalogowany użytkownik), więc przeglądarka
+        // nie może ich trzymać w pamięci podręcznej – inaczej po wylogowaniu przycisk Wstecz
+        // pokazałby chronioną stronę z cache.
+        header('Cache-Control: no-store');
+
         $variables = array_merge(self::LAYOUT_DEFAULTS, $variables);
         $variables['locale'] = $this->translator->locale();
         $variables['csrfToken'] = (new CsrfTokenManager($this->session))->token();

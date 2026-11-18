@@ -276,6 +276,23 @@ main > .container > section {
     gap: var(--space-sm);
 }
 
+.logout-form .logout-form__button {
+    margin: 0;
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+}
+
+.logout-form .logout-form__button:hover {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
 .navbar__user {
     font-size: var(--text-sm);
     font-weight: var(--font-weight-semibold);

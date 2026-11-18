@@ -35,6 +35,7 @@ $routing->get('/register', AuthController::class, 'showRegistrationForm');
 $routing->post('/register', AuthController::class, 'register');
 $routing->get('/login', AuthController::class, 'showLoginForm');
 $routing->post('/login', AuthController::class, 'login');
+$routing->post('/logout', AuthController::class, 'logout');
 
 // Zmiana języka interfejsu (zapis w sesji)
 $routing->post('/language', LanguageController::class, 'change');

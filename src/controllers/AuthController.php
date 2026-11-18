@@ -75,6 +75,12 @@ final class AuthController extends AppController
         $this->redirect('/');
     }
 
+    public function logout(): void
+    {
+        $this->auth->logOut();
+        $this->redirect('/');
+    }
+
     private function renderLoginForm(?string $error, string $oldEmail): void
     {
         $this->render('login', [
