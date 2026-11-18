@@ -276,6 +276,12 @@ main > .container > section {
     gap: var(--space-sm);
 }
 
+.navbar__user {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
 /* Przełącznik języka (selektor podwójnej klasy nadpisuje style button[type="submit"]) */
 .language-switcher {
     display: flex;

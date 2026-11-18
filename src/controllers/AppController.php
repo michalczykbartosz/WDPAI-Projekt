@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Security\AuthSession;
 use App\Security\CsrfTokenManager;
 use App\Security\SessionManager;
 use App\Service\LocalePreference;
@@ -17,15 +18,16 @@ abstract class AppController
     /** Wartości domyślne dla wspólnego layoutu, nadpisywane przez kontrolery. */
     private const LAYOUT_DEFAULTS = [
         'activePage' => '',
-        'userRole' => 'player',
     ];
 
     protected readonly SessionManager $session;
+    protected readonly AuthSession $auth;
     protected readonly Translator $translator;
 
     public function __construct()
     {
         $this->session = new SessionManager();
+        $this->auth = new AuthSession($this->session);
         $locale = (new LocalePreference($this->session))->current();
         $this->translator = new Translator($locale, self::LANG_DIR);
     }
@@ -87,6 +89,8 @@ abstract class AppController
         $variables['locale'] = $this->translator->locale();
         $variables['csrfToken'] = (new CsrfTokenManager($this->session))->token();
         $variables['flashMessage'] = $this->session->pullFlash();
+        $variables['currentUserName'] = $this->auth->displayName();
+        $variables['currentUserRole'] = $this->auth->role();
         $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
         $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();

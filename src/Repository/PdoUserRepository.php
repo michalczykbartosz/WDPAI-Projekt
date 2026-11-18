@@ -4,8 +4,35 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Model\User;
+use App\Model\UserRole;
+use DateTimeImmutable;
+
 final class PdoUserRepository extends PdoRepository implements UserRepositoryInterface
 {
+    public function findByEmail(string $email): ?User
+    {
+        $row = $this->fetchOne(<<<'SQL'
+            SELECT u.id, u.email, u.password_hash, u.role, u.created_at, pp.display_name
+            FROM users u
+            LEFT JOIN player_profiles pp ON pp.user_id = u.id
+            WHERE lower(u.email) = lower(:email)
+            SQL, ['email' => $email]);
+
+        if ($row === null) {
+            return null;
+        }
+
+        return new User(
+            (int) $row['id'],
+            $row['email'],
+            $row['password_hash'],
+            UserRole::from($row['role']),
+            new DateTimeImmutable($row['created_at']),
+            $row['display_name'],
+        );
+    }
+
     public function emailExists(string $email): bool
     {
         $row = $this->fetchOne(

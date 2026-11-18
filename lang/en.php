@@ -10,6 +10,7 @@ return [
     'nav.leaderboard' => 'Leaderboard',
     'nav.organizer' => 'Organizer panel',
     'nav.register' => 'Sign up',
+    'nav.login' => 'Log in',
     'theme.to_light' => 'Switch to light theme',
     'theme.to_dark' => 'Switch to dark theme',
     'role.player' => 'Player',
@@ -29,6 +30,7 @@ return [
     'title.organizer_create' => 'Create tournament – Organizer panel',
     'title.leaderboard' => 'Player leaderboard – DartArena',
     'title.register' => 'Sign up – DartArena',
+    'title.login' => 'Log in – DartArena',
     'title.profile' => '{name} – Profile – DartArena',
 
     // Home page
@@ -176,4 +178,12 @@ return [
     'validation.password.too_short' => 'The password must be at least 8 characters long.',
     'validation.password.too_long' => 'The password is too long (maximum 72 bytes).',
     'validation.password.mismatch' => 'The passwords do not match.',
+    // Login
+    'login.title' => 'Log in',
+    'login.email' => 'Email address:',
+    'login.password' => 'Password:',
+    'login.submit' => 'Log in',
+    'login.no_account' => "Don't have an account?",
+    'auth.invalid_credentials' => 'Invalid email or password.',
+    'flash.logged_in' => 'You are now logged in.',
 ];

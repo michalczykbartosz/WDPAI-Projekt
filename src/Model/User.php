@@ -14,6 +14,7 @@ final readonly class User
         private string $passwordHash,
         public UserRole $role,
         public DateTimeImmutable $createdAt,
+        public ?string $displayName = null,
     ) {
     }
 

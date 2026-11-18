@@ -16,8 +16,10 @@ use App\Repository\PdoTournamentRepository;
 use App\Repository\PdoUserRepository;
 use App\Repository\PlayerRepositoryInterface;
 use App\Repository\TournamentRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 use App\Security\CsrfTokenManager;
 use App\Security\SessionManager;
+use App\Service\LoginService;
 use App\Service\RegistrationService;
 use App\Service\RegistrationValidator;
 
@@ -27,6 +29,7 @@ final class Container
     private ?SessionManager $session = null;
     private ?TournamentRepositoryInterface $tournamentRepository = null;
     private ?PlayerRepositoryInterface $playerRepository = null;
+    private ?UserRepositoryInterface $userRepository = null;
 
     /** @param class-string<AppController> $controllerClass */
     public function controller(string $controllerClass): AppController
@@ -36,7 +39,8 @@ final class Container
             TournamentController::class => new TournamentController($this->tournamentRepository()),
             PlayerController::class => new PlayerController($this->playerRepository()),
             AuthController::class => new AuthController(
-                new RegistrationService(new RegistrationValidator(), new PdoUserRepository($this->database())),
+                new RegistrationService(new RegistrationValidator(), $this->userRepository()),
+                new LoginService($this->userRepository()),
             ),
             default => new $controllerClass(),
         };
@@ -60,6 +64,11 @@ final class Container
     private function playerRepository(): PlayerRepositoryInterface
     {
         return $this->playerRepository ??= new PdoPlayerRepository($this->database());
+    }
+
+    private function userRepository(): UserRepositoryInterface
+    {
+        return $this->userRepository ??= new PdoUserRepository($this->database());
     }
 
     private function database(): Database

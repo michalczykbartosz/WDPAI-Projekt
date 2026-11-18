@@ -61,7 +61,6 @@ final class TournamentController extends AppController
         $this->render('organizer-create', [
             'pageTitle' => $this->translator->get('title.organizer_create'),
             'activePage' => 'organizer',
-            'userRole' => 'organizer',
             'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
             'maxPlayersOptions' => [4, 8, 16],
         ]);

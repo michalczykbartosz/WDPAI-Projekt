@@ -3,10 +3,12 @@ $navLinks = [
     'tournaments' => ['url' => '/tournaments', 'label' => 'nav.tournaments'],
     'leaderboard' => ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
     'organizer' => ['url' => '/organizer/create', 'label' => 'nav.organizer'],
-    'register' => ['url' => '/register', 'label' => 'nav.register'],
 ];
 
-$roles = ['player', 'organizer'];
+if ($currentUserName === null) {
+    $navLinks['login'] = ['url' => '/login', 'label' => 'nav.login'];
+    $navLinks['register'] = ['url' => '/register', 'label' => 'nav.register'];
+}
 ?>
 <header class="navbar">
     <div class="container">
@@ -32,8 +34,9 @@ $roles = ['player', 'organizer'];
                     data-label-to-light="<?= $t('theme.to_light') ?>"
                     data-label-to-dark="<?= $t('theme.to_dark') ?>"
                     aria-label="<?= $t('theme.to_light') ?>">🌙</button>
-            <?php if (in_array($userRole, $roles, true)): ?>
-                <span class="badge badge--<?= htmlspecialchars($userRole) ?>"><?= $t('role.' . $userRole) ?></span>
+            <?php if ($currentUserName !== null && $currentUserRole !== null): ?>
+                <span class="navbar__user"><?= htmlspecialchars($currentUserName) ?></span>
+                <span class="badge badge--<?= strtolower($currentUserRole->value) ?>"><?= $t('role.' . strtolower($currentUserRole->value)) ?></span>
             <?php endif; ?>
         </div>
     </div>

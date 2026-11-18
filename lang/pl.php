@@ -10,6 +10,7 @@ return [
     'nav.leaderboard' => 'Ranking',
     'nav.organizer' => 'Panel organizatora',
     'nav.register' => 'Rejestracja',
+    'nav.login' => 'Logowanie',
     'theme.to_light' => 'Przełącz na jasny motyw',
     'theme.to_dark' => 'Przełącz na ciemny motyw',
     'role.player' => 'Gracz',
@@ -29,6 +30,7 @@ return [
     'title.organizer_create' => 'Utwórz turniej – Panel organizatora',
     'title.leaderboard' => 'Ranking graczy – DartArena',
     'title.register' => 'Rejestracja – DartArena',
+    'title.login' => 'Logowanie – DartArena',
     'title.profile' => '{name} – Profil – DartArena',
 
     // Strona główna
@@ -176,4 +178,12 @@ return [
     'validation.password.too_short' => 'Hasło musi mieć co najmniej 8 znaków.',
     'validation.password.too_long' => 'Hasło jest za długie (maksymalnie 72 bajty).',
     'validation.password.mismatch' => 'Hasła nie są takie same.',
+    // Logowanie
+    'login.title' => 'Zaloguj się',
+    'login.email' => 'Adres e-mail:',
+    'login.password' => 'Hasło:',
+    'login.submit' => 'Zaloguj się',
+    'login.no_account' => 'Nie masz konta?',
+    'auth.invalid_credentials' => 'Nieprawidłowy e-mail lub hasło.',
+    'flash.logged_in' => 'Zalogowano pomyślnie.',
 ];
