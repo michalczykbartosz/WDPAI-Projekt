@@ -128,12 +128,42 @@ abstract class AppController
         $variables['flashMessage'] = $this->session->pullFlash();
         $variables['currentUserName'] = $this->auth->displayName();
         $variables['currentUserRole'] = $this->auth->role();
+        $variables['navLinks'] = $this->navigationLinks();
         $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
         $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();
         $variables['content'] = $this->renderTemplate($template, $variables);
 
         echo $this->renderTemplate('layout', $variables);
+    }
+
+    /**
+     * Pozycje menu zależą od roli zapisanej w sesji: gość widzi logowanie i rejestrację,
+     * gracz link do własnego profilu, a organizator panel tworzenia turniejów.
+     *
+     * @return array<string, array{url: string, label: string}>
+     */
+    private function navigationLinks(): array
+    {
+        $links = [
+            'tournaments' => ['url' => '/tournaments', 'label' => 'nav.tournaments'],
+            'leaderboard' => ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
+        ];
+
+        $userId = $this->auth->userId();
+
+        return match ($userId !== null ? $this->auth->role() : null) {
+            UserRole::Organizer => $links + [
+                'organizer' => ['url' => '/organizer/create', 'label' => 'nav.organizer'],
+            ],
+            UserRole::Player => $links + [
+                'profile' => ['url' => '/players/' . $userId, 'label' => 'nav.my_profile'],
+            ],
+            null => $links + [
+                'login' => ['url' => '/login', 'label' => 'nav.login'],
+                'register' => ['url' => '/register', 'label' => 'nav.register'],
+            ],
+        };
     }
 
     /** @param list<array{url: string, label: string}> $extraLinks */

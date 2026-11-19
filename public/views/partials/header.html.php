@@ -1,15 +1,3 @@
-<?php
-$navLinks = [
-    'tournaments' => ['url' => '/tournaments', 'label' => 'nav.tournaments'],
-    'leaderboard' => ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],
-    'organizer' => ['url' => '/organizer/create', 'label' => 'nav.organizer'],
-];
-
-if ($currentUserName === null) {
-    $navLinks['login'] = ['url' => '/login', 'label' => 'nav.login'];
-    $navLinks['register'] = ['url' => '/register', 'label' => 'nav.register'];
-}
-?>
 <header class="navbar">
     <div class="container">
         <a href="/" class="navbar__brand">🎯 DartArena</a>

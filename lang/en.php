@@ -9,6 +9,7 @@ return [
     'nav.tournaments' => 'Tournaments',
     'nav.leaderboard' => 'Leaderboard',
     'nav.organizer' => 'Organizer panel',
+    'nav.my_profile' => 'My profile',
     'nav.register' => 'Sign up',
     'nav.login' => 'Log in',
     'nav.logout' => 'Log out',

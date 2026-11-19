@@ -41,6 +41,7 @@ final class PlayerController extends AppController
 
         $this->render('player-profile', [
             'pageTitle' => $this->translator->get('title.profile', ['name' => $profile->displayName]),
+            'activePage' => $this->auth->userId() === $playerId ? 'profile' : '',
             'profile' => $profile,
             'stats' => $stats,
             'recentMatches' => $this->players->findRecentMatches($playerId),
