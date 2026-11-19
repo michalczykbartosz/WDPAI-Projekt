@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Model\GameMatch;
 use App\Model\Tournament;
 use App\Model\TournamentStatus;
+use App\Model\UserRole;
 use App\Repository\TournamentRepositoryInterface;
 
 final class TournamentController extends AppController
@@ -58,6 +59,10 @@ final class TournamentController extends AppController
 
     public function create(): void
     {
+        if ($this->denyUnlessRole(UserRole::Organizer)) {
+            return;
+        }
+
         $this->render('organizer-create', [
             'pageTitle' => $this->translator->get('title.organizer_create'),
             'activePage' => 'organizer',

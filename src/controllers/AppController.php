@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\UserRole;
+use App\Security\AccessDecision;
 use App\Security\AuthSession;
 use App\Security\CsrfTokenManager;
+use App\Security\RoleGuard;
 use App\Security\SessionManager;
 use App\Service\LocalePreference;
 use App\Service\Translator;
@@ -22,12 +25,14 @@ abstract class AppController
 
     protected readonly SessionManager $session;
     protected readonly AuthSession $auth;
+    protected readonly RoleGuard $guard;
     protected readonly Translator $translator;
 
     public function __construct()
     {
         $this->session = new SessionManager();
         $this->auth = new AuthSession($this->session);
+        $this->guard = new RoleGuard($this->auth);
         $locale = (new LocalePreference($this->session))->current();
         $this->translator = new Translator($locale, self::LANG_DIR);
     }
@@ -45,6 +50,33 @@ abstract class AppController
     protected function badRequest(): void
     {
         $this->renderError(400, 'bad_request');
+    }
+
+    protected function unauthorized(): void
+    {
+        $this->renderError(401, 'unauthorized', [['url' => '/login', 'label' => 'nav.login']]);
+    }
+
+    /**
+     * Wpuszcza tylko zalogowanych użytkowników z jedną z podanych ról.
+     * Gość dostaje 401, użytkownik z inną rolą 403. Zwraca true, gdy dostęp
+     * zablokowano i strona błędu została już wyrenderowana.
+     */
+    protected function denyUnlessRole(UserRole ...$allowedRoles): bool
+    {
+        $decision = $this->guard->check(...$allowedRoles);
+
+        if ($decision === AccessDecision::Granted) {
+            return false;
+        }
+
+        if ($decision === AccessDecision::Unauthenticated) {
+            $this->unauthorized();
+        } else {
+            $this->renderError(403, 'access_denied');
+        }
+
+        return true;
     }
 
     protected function redirect(string $path): void
@@ -104,7 +136,8 @@ abstract class AppController
         echo $this->renderTemplate('layout', $variables);
     }
 
-    private function renderError(int $statusCode, string $errorKey): void
+    /** @param list<array{url: string, label: string}> $extraLinks */
+    private function renderError(int $statusCode, string $errorKey, array $extraLinks = []): void
     {
         http_response_code($statusCode);
 
@@ -113,6 +146,7 @@ abstract class AppController
             'statusCode' => $statusCode,
             'errorKey' => $errorKey,
             'suggestedLinks' => [
+                ...$extraLinks,
                 ['url' => '/', 'label' => 'nav.home'],
                 ['url' => '/tournaments', 'label' => 'nav.tournaments'],
                 ['url' => '/leaderboard', 'label' => 'nav.leaderboard'],

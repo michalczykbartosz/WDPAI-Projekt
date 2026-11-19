@@ -26,6 +26,8 @@ return [
     'title.not_found' => '404 – Nie znaleziono strony – DartArena',
     'title.bad_request' => '400 – Nieprawidłowe żądanie – DartArena',
     'title.forbidden' => '403 – Brak dostępu – DartArena',
+    'title.unauthorized' => '401 – Wymagane logowanie – DartArena',
+    'title.access_denied' => '403 – Brak uprawnień – DartArena',
     'title.tournaments' => 'Turnieje – DartArena',
     'title.tournament' => '{name} – DartArena',
     'title.organizer_create' => 'Utwórz turniej – Panel organizatora',
@@ -78,6 +80,8 @@ return [
     'not_found.message' => 'Przepraszamy, szukana strona nie istnieje lub została usunięta.',
     'bad_request.message' => 'Żądanie zawiera nieprawidłowe dane, np. błędny identyfikator w adresie.',
     'forbidden.message' => 'Nie możesz wykonać tej operacji. Jeśli wysyłałeś formularz, sesja mogła wygasnąć – odśwież stronę i spróbuj ponownie.',
+    'unauthorized.message' => 'Ta strona jest dostępna tylko dla zalogowanych użytkowników. Zaloguj się, aby kontynuować.',
+    'access_denied.message' => 'Twoje konto nie ma uprawnień do tej strony. Panel organizatora jest dostępny tylko dla organizatorów.',
     'error.suggestions' => 'Może szukasz:',
 
     // Lista turniejów
