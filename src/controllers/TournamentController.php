@@ -4,20 +4,39 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\FinishRule;
 use App\Model\GameMatch;
 use App\Model\Tournament;
 use App\Model\TournamentStatus;
 use App\Model\UserRole;
 use App\Repository\TournamentRepositoryInterface;
+use App\Service\TournamentCreationService;
+use App\Service\TournamentValidator;
+use App\Service\ValidationException;
 
 final class TournamentController extends AppController
 {
-    public function __construct(private readonly TournamentRepositoryInterface $tournaments)
-    {
+    private const PUBLIC_STATUSES = [TournamentStatus::Open, TournamentStatus::Ongoing, TournamentStatus::Finished];
+
+    /** Wartości startowe pustego formularza tworzenia turnieju. */
+    private const CREATE_FORM_DEFAULTS = [
+        'name' => '',
+        'description' => '',
+        'location' => '',
+        'max_players' => '8',
+        'starting_score' => '501',
+        'finish_rule' => 'double_out',
+        'legs_to_win' => '3',
+        'starts_at' => '',
+        'registration_deadline' => '',
+    ];
+
+    public function __construct(
+        private readonly TournamentRepositoryInterface $tournaments,
+        private readonly TournamentCreationService $creation,
+    ) {
         parent::__construct();
     }
-
-    private const PUBLIC_STATUSES = [TournamentStatus::Open, TournamentStatus::Ongoing, TournamentStatus::Finished];
 
     public function index(): void
     {
@@ -63,11 +82,54 @@ final class TournamentController extends AppController
             return;
         }
 
+        $this->renderCreateForm([], self::CREATE_FORM_DEFAULTS);
+    }
+
+    public function store(): void
+    {
+        if ($this->denyUnlessRole(UserRole::Organizer)) {
+            return;
+        }
+
+        $input = [];
+
+        foreach (TournamentValidator::FIELDS as $field) {
+            $input[$field] = $this->postString($field);
+        }
+
+        $organizerId = $this->auth->userId() ?? throw new \LogicException('Role guard passed without a logged-in user.');
+
+        try {
+            $tournamentId = $this->creation->create($organizerId, $input);
+        } catch (ValidationException $exception) {
+            http_response_code(422);
+            $this->renderCreateForm($exception->errors, $input);
+            return;
+        }
+
+        $this->session->flash('flash.tournament_created');
+        $this->redirect('/tournaments/' . $tournamentId);
+    }
+
+    /**
+     * @param array<string, string> $errors
+     * @param array<string, string> $old
+     */
+    private function renderCreateForm(array $errors, array $old): void
+    {
         $this->render('organizer-create', [
             'pageTitle' => $this->translator->get('title.organizer_create'),
             'activePage' => 'organizer',
-            'formats' => ['501 Double Out', '301 Double Out', '501 Single Out'],
-            'maxPlayersOptions' => [4, 8, 16],
+            'errors' => $errors,
+            'old' => $old,
+            'startingScoreOptions' => Tournament::STARTING_SCORES,
+            'finishRuleOptions' => FinishRule::cases(),
+            'maxPlayersOptions' => Tournament::MAX_PLAYERS_OPTIONS,
+            'legsToWinOptions' => Tournament::LEGS_TO_WIN_OPTIONS,
+            'nameMinLength' => TournamentValidator::NAME_MIN_LENGTH,
+            'nameMaxLength' => TournamentValidator::NAME_MAX_LENGTH,
+            'descriptionMaxLength' => TournamentValidator::DESCRIPTION_MAX_LENGTH,
+            'locationMaxLength' => TournamentValidator::LOCATION_MAX_LENGTH,
         ]);
     }
 

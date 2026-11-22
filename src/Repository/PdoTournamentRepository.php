@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Model\FinishRule;
 use App\Model\GameMatch;
 use App\Model\MatchStatus;
+use App\Model\NewTournament;
 use App\Model\Participant;
 use App\Model\Tournament;
 use App\Model\TournamentStatus;
@@ -76,6 +77,44 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
             SQL, ['tournament_id' => $tournamentId]);
 
         return array_map($this->mapMatch(...), $rows);
+    }
+
+    public function create(NewTournament $tournament, string $inviteCode): int
+    {
+        $row = $this->fetchOne(<<<'SQL'
+            INSERT INTO tournaments (
+                organizer_id, name, description, location, starts_at, registration_deadline,
+                max_players, starting_score, finish_rule, legs_to_win, invite_code, status
+            ) VALUES (
+                :organizer_id, :name, :description, :location, :starts_at, :registration_deadline,
+                :max_players, :starting_score, CAST(:finish_rule AS finish_rule), :legs_to_win, :invite_code, 'open'
+            )
+            RETURNING id
+            SQL, [
+            'organizer_id' => $tournament->organizerId,
+            'name' => $tournament->name,
+            'description' => $tournament->description,
+            'location' => $tournament->location,
+            'starts_at' => $tournament->startsAt->format(DATE_ATOM),
+            'registration_deadline' => $tournament->registrationDeadline->format(DATE_ATOM),
+            'max_players' => $tournament->maxPlayers,
+            'starting_score' => $tournament->startingScore,
+            'finish_rule' => $tournament->finishRule->value,
+            'legs_to_win' => $tournament->legsToWin,
+            'invite_code' => $inviteCode,
+        ]);
+
+        return (int) $row['id'];
+    }
+
+    public function inviteCodeExists(string $inviteCode): bool
+    {
+        $row = $this->fetchOne(
+            'SELECT EXISTS (SELECT 1 FROM tournaments WHERE invite_code = :invite_code) AS taken',
+            ['invite_code' => $inviteCode],
+        );
+
+        return (bool) $row['taken'];
     }
 
     private function findOneBy(string $condition, int|string $value): ?Tournament

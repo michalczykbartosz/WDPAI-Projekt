@@ -22,6 +22,8 @@ use App\Security\SessionManager;
 use App\Service\LoginService;
 use App\Service\RegistrationService;
 use App\Service\RegistrationValidator;
+use App\Service\TournamentCreationService;
+use App\Service\TournamentValidator;
 
 final class Container
 {
@@ -36,7 +38,10 @@ final class Container
     {
         return match ($controllerClass) {
             DefaultController::class => new DefaultController($this->tournamentRepository(), $this->playerRepository()),
-            TournamentController::class => new TournamentController($this->tournamentRepository()),
+            TournamentController::class => new TournamentController(
+                $this->tournamentRepository(),
+                new TournamentCreationService(new TournamentValidator(), $this->tournamentRepository()),
+            ),
             PlayerController::class => new PlayerController($this->playerRepository()),
             AuthController::class => new AuthController(
                 new RegistrationService(new RegistrationValidator(), $this->userRepository()),

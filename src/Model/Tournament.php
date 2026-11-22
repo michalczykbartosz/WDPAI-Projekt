@@ -9,6 +9,8 @@ use DateTimeImmutable;
 final readonly class Tournament
 {
     public const STARTING_SCORES = [301, 501];
+    public const MAX_PLAYERS_OPTIONS = [4, 8, 16, 32];
+    public const LEGS_TO_WIN_OPTIONS = [3, 5, 7, 9];
 
     public function __construct(
         public int $id,

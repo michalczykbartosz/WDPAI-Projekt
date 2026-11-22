@@ -14,7 +14,7 @@ abstract class PdoRepository
     }
 
     /**
-     * @param array<string, int|string> $parameters
+     * @param array<string, int|string|null> $parameters
      * @return list<array<string, mixed>>
      */
     protected function fetchAll(string $sql, array $parameters = []): array
@@ -23,7 +23,7 @@ abstract class PdoRepository
     }
 
     /**
-     * @param array<string, int|string> $parameters
+     * @param array<string, int|string|null> $parameters
      * @return array<string, mixed>|null
      */
     protected function fetchOne(string $sql, array $parameters = []): ?array
@@ -31,7 +31,7 @@ abstract class PdoRepository
         return $this->fetchAll($sql, $parameters)[0] ?? null;
     }
 
-    /** @param array<string, int|string> $parameters */
+    /** @param array<string, int|string|null> $parameters */
     protected function execute(string $sql, array $parameters = []): PDOStatement
     {
         $statement = $this->database->connection()->prepare($sql);
