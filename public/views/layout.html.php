@@ -39,5 +39,7 @@
 
     <script src="/js/theme.js"></script>
     <script src="/js/navigation.js"></script>
+    <script type="application/json" id="validation-messages"><?= json_encode($validationMessages, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR) ?></script>
+    <script type="module" src="/js/form-validation.js"></script>
 </body>
 </html>

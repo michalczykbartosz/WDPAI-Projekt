@@ -15,7 +15,7 @@ $selected = static fn (string $field, string $value): string => $old[$field] ===
 ?>
 <h1><?= $t('organizer.title') ?></h1>
 
-<form action="/organizer/create" method="post" class="card" novalidate>
+<form action="/organizer/create" method="post" class="card" novalidate data-validate>
     <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
 
     <fieldset>
@@ -75,11 +75,14 @@ $selected = static fn (string $field, string $value): string => $old[$field] ===
 
         <label for="starts_at"><?= $t('organizer.starts_at') ?></label>
         <input type="datetime-local" id="starts_at" name="starts_at" required
+               data-future="validation.tournament.starts_at_past"
                value="<?= htmlspecialchars($old['starts_at']) ?>"<?= $invalidAttributes('starts_at') ?>>
         <?= $fieldError('starts_at') ?>
 
         <label for="registration_deadline"><?= $t('organizer.deadline') ?></label>
         <input type="datetime-local" id="registration_deadline" name="registration_deadline" required
+               data-future="validation.tournament.deadline_past"
+               data-not-after="starts_at" data-not-after-message="validation.tournament.deadline_after_start"
                value="<?= htmlspecialchars($old['registration_deadline']) ?>"<?= $invalidAttributes('registration_deadline') ?>>
         <?= $fieldError('registration_deadline') ?>
 

@@ -178,6 +178,8 @@ return [
 
     // Form validation
     'validation.required' => 'This field is required.',
+    'validation.too_short' => 'Use at least {min} characters.',
+    'validation.too_long' => 'Use at most {max} characters.',
     'validation.email.invalid' => 'Enter a valid email address.',
     'validation.email.taken' => 'An account with this email already exists.',
     'validation.display_name.length' => 'The name must be 3 to 50 characters long.',

@@ -1,6 +1,6 @@
 <h1><?= $t('login.title') ?></h1>
 
-<form action="/login" method="post" class="card form-narrow" novalidate>
+<form action="/login" method="post" class="card form-narrow" novalidate data-validate>
     <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
 
     <?php if ($error !== null): ?>

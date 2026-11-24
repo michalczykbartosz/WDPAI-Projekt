@@ -13,7 +13,7 @@ $invalidAttributes = static fn (string $field): string => isset($errors[$field])
 ?>
 <h1><?= $t('register.title') ?></h1>
 
-<form action="/register" method="post" class="card form-narrow" novalidate>
+<form action="/register" method="post" class="card form-narrow" novalidate data-validate>
     <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
 
     <label for="email"><?= $t('register.email') ?></label>
@@ -33,7 +33,8 @@ $invalidAttributes = static fn (string $field): string => isset($errors[$field])
     <?= $fieldError('password') ?>
 
     <label for="password_confirmation"><?= $t('register.password_confirmation') ?></label>
-    <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"<?= $invalidAttributes('password_confirmation') ?>>
+    <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"
+           data-match="password" data-match-message="validation.password.mismatch"<?= $invalidAttributes('password_confirmation') ?>>
     <?= $fieldError('password_confirmation') ?>
 
     <button type="submit"><?= $t('register.submit') ?></button>

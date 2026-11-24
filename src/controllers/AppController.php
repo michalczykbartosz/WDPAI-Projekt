@@ -129,6 +129,7 @@ abstract class AppController
         $variables['currentUserName'] = $this->auth->displayName();
         $variables['currentUserRole'] = $this->auth->role();
         $variables['navLinks'] = $this->navigationLinks();
+        $variables['validationMessages'] = $this->translator->messagesWithPrefix('validation.');
         $variables['supportedLocales'] = Translator::SUPPORTED_LOCALES;
         $variables['currentPath'] = $_SERVER['REQUEST_URI'] ?? '/';
         $variables['t'] = $this->createViewTranslator();

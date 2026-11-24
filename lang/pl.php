@@ -178,6 +178,8 @@ return [
 
     // Walidacja formularzy
     'validation.required' => 'To pole jest wymagane.',
+    'validation.too_short' => 'Minimalna liczba znaków: {min}.',
+    'validation.too_long' => 'Maksymalna liczba znaków: {max}.',
     'validation.email.invalid' => 'Podaj poprawny adres e-mail.',
     'validation.email.taken' => 'Konto z tym adresem e-mail już istnieje.',
     'validation.display_name.length' => 'Nazwa musi mieć od 3 do 50 znaków.',

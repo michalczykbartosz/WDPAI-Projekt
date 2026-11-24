@@ -34,6 +34,21 @@ final class Translator
     }
 
     /**
+     * Zwraca wszystkie teksty, których klucz zaczyna się od prefiksu,
+     * np. komunikaty walidacji przekazywane do JavaScriptu.
+     *
+     * @return array<string, string>
+     */
+    public function messagesWithPrefix(string $prefix): array
+    {
+        return array_filter(
+            $this->messages,
+            static fn (string $key): bool => str_starts_with($key, $prefix),
+            ARRAY_FILTER_USE_KEY,
+        );
+    }
+
+    /**
      * Zwraca tekst dla klucza i podstawia parametry w formacie {nazwa}.
      * Brakujący klucz jest zwracany bez zmian, żeby od razu było go widać w interfejsie.
      *
