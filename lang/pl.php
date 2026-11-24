@@ -139,6 +139,14 @@ return [
     'bracket.match' => 'Mecz #{id}',
     'bracket.vs' => 'vs',
     'bracket.tbd' => 'Do ustalenia',
+    'bracket.bye' => 'Wolny los',
+    'bracket.bye_advance' => 'Awans bez gry',
+    'bracket.generate' => 'Wygeneruj drabinkę',
+    'bracket.generate_hint' => 'Losuje pary z zapisanych zawodników i zamyka zapisy. Tej operacji nie można cofnąć.',
+    'bracket.error.not_owner' => 'Drabinkę może wygenerować tylko organizator tego turnieju.',
+    'bracket.error.already_generated' => 'Drabinka dla tego turnieju już istnieje.',
+    'bracket.error.not_enough_players' => 'Do wygenerowania drabinki potrzeba co najmniej 2 zawodników.',
+    'flash.bracket_generated' => 'Drabinka została wygenerowana, a zapisy zamknięte.',
 
     // Formularz wyniku meczu
     'result.title' => 'Wpisz wynik meczu',

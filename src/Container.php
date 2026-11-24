@@ -19,6 +19,8 @@ use App\Repository\TournamentRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
 use App\Security\CsrfTokenManager;
 use App\Security\SessionManager;
+use App\Service\BracketGenerator;
+use App\Service\BracketService;
 use App\Service\LoginService;
 use App\Service\RegistrationService;
 use App\Service\RegistrationValidator;
@@ -43,6 +45,7 @@ final class Container
                 $this->tournamentRepository(),
                 new TournamentCreationService(new TournamentValidator(), $this->tournamentRepository()),
                 new TournamentRegistrationService($this->tournamentRepository()),
+                new BracketService(new BracketGenerator(), $this->tournamentRepository()),
             ),
             PlayerController::class => new PlayerController($this->playerRepository()),
             AuthController::class => new AuthController(

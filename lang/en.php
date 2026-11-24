@@ -139,6 +139,14 @@ return [
     'bracket.match' => 'Match #{id}',
     'bracket.vs' => 'vs',
     'bracket.tbd' => 'TBD',
+    'bracket.bye' => 'Bye',
+    'bracket.bye_advance' => 'Advances without playing',
+    'bracket.generate' => 'Generate bracket',
+    'bracket.generate_hint' => 'Draws pairs from the registered players and closes registration. This cannot be undone.',
+    'bracket.error.not_owner' => 'Only the organizer of this tournament can generate its bracket.',
+    'bracket.error.already_generated' => 'The bracket for this tournament already exists.',
+    'bracket.error.not_enough_players' => 'At least 2 players are needed to generate a bracket.',
+    'flash.bracket_generated' => 'The bracket has been generated and registration is closed.',
 
     // Match result form
     'result.title' => 'Enter match result',

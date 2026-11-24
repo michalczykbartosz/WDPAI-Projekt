@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Model\Bracket;
 use App\Model\FinishRule;
 use App\Model\GameMatch;
 use App\Model\MatchStatus;
@@ -165,6 +166,59 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
             );
 
             return AddParticipantResult::Added;
+        });
+    }
+
+    public function saveBracket(int $tournamentId, Bracket $bracket): bool
+    {
+        return $this->transaction(function () use ($tournamentId, $bracket): bool {
+            $tournament = $this->fetchOne(
+                'SELECT status FROM tournaments WHERE id = :id FOR UPDATE',
+                ['id' => $tournamentId],
+            );
+
+            if ($tournament === null || $tournament['status'] !== TournamentStatus::Open->value) {
+                return false;
+            }
+
+            // Numer rozstawienia jest unikalny w turnieju, więc najpierw czyścimy stare wartości
+            $this->execute(
+                'UPDATE tournament_participants SET seed = NULL WHERE tournament_id = :tournament_id',
+                ['tournament_id' => $tournamentId],
+            );
+
+            foreach ($bracket->seeds as $userId => $seed) {
+                $this->execute(
+                    'UPDATE tournament_participants SET seed = :seed WHERE tournament_id = :tournament_id AND user_id = :user_id',
+                    ['seed' => $seed, 'tournament_id' => $tournamentId, 'user_id' => $userId],
+                );
+            }
+
+            foreach ($bracket->matches as $match) {
+                $this->execute(<<<'SQL'
+                    INSERT INTO matches (tournament_id, round, position, player1_id, player2_id, winner_id, status, played_at)
+                    VALUES (
+                        :tournament_id, :round, :position, :player1_id, :player2_id, :winner_id,
+                        CAST(:status AS match_status), CASE WHEN :is_bye THEN now() END
+                    )
+                    SQL, [
+                    'tournament_id' => $tournamentId,
+                    'round' => $match->round,
+                    'position' => $match->position,
+                    'player1_id' => $match->player1Id,
+                    'player2_id' => $match->player2Id,
+                    'winner_id' => $match->winnerId,
+                    'status' => $match->isBye() ? MatchStatus::Finished->value : MatchStatus::Pending->value,
+                    'is_bye' => $match->isBye() ? 'true' : 'false',
+                ]);
+            }
+
+            $this->execute(
+                "UPDATE tournaments SET status = 'ongoing' WHERE id = :id",
+                ['id' => $tournamentId],
+            );
+
+            return true;
         });
     }
 

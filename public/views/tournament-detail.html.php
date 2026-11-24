@@ -63,6 +63,13 @@
 
 <section>
     <h2><?= $t('bracket.title') ?></h2>
+    <?php if ($canGenerateBracket): ?>
+        <form action="/tournaments/<?= $tournament->id ?>/bracket" method="post" class="card mb-lg">
+            <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
+            <p class="text-muted"><?= $t('bracket.generate_hint') ?></p>
+            <button type="submit" class="btn btn--primary"><?= $t('bracket.generate') ?></button>
+        </form>
+    <?php endif; ?>
     <?php if (!empty($rounds)): ?>
         <div class="bracket">
             <?php foreach ($rounds as $round): ?>

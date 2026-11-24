@@ -30,6 +30,12 @@ final readonly class GameMatch
         return $this->status === MatchStatus::Finished;
     }
 
+    /** Wolny los: mecz zakończony bez przeciwnika, gracz przechodzi dalej bez gry. */
+    public function isBye(): bool
+    {
+        return $this->isFinished() && ($this->player1Id === null || $this->player2Id === null);
+    }
+
     public function hasPlayer(int $userId): bool
     {
         return $this->player1Id === $userId || $this->player2Id === $userId;

@@ -12,6 +12,9 @@ use App\Model\TournamentStatus;
 use App\Model\UserRole;
 use App\Repository\TournamentRepositoryInterface;
 use App\Security\AccessDecision;
+use App\Service\BracketGenerationError;
+use App\Service\BracketGenerationException;
+use App\Service\BracketService;
 use App\Service\TournamentCreationService;
 use App\Service\TournamentRegistrationException;
 use App\Service\TournamentRegistrationService;
@@ -41,6 +44,7 @@ final class TournamentController extends AppController
         private readonly TournamentRepositoryInterface $tournaments,
         private readonly TournamentCreationService $creation,
         private readonly TournamentRegistrationService $registrations,
+        private readonly BracketService $brackets,
     ) {
         parent::__construct();
     }
@@ -176,6 +180,40 @@ final class TournamentController extends AppController
     }
 
     /**
+     * Organizator losuje drabinkę swojego turnieju. Zwykły formularz POST: po nim
+     * wracamy na stronę turnieju z komunikatem o wyniku.
+     */
+    public function generateBracket(string $id): void
+    {
+        $tournamentId = $this->parseId($id);
+
+        if ($tournamentId === null) {
+            $this->badRequest();
+            return;
+        }
+
+        if ($this->denyUnlessRole(UserRole::Organizer)) {
+            return;
+        }
+
+        $organizerId = $this->auth->userId() ?? throw new \LogicException('Role guard passed without a logged-in user.');
+
+        try {
+            $this->brackets->generate($tournamentId, $organizerId);
+            $this->session->flash('flash.bracket_generated');
+        } catch (BracketGenerationException $exception) {
+            if ($exception->error === BracketGenerationError::NotFound) {
+                $this->notFound();
+                return;
+            }
+
+            $this->session->flash('bracket.error.' . $exception->error->value);
+        }
+
+        $this->redirect('/tournaments/' . $tournamentId);
+    }
+
+    /**
      * @param array<string, string> $errors
      * @param array<string, string> $old
      */
@@ -212,8 +250,18 @@ final class TournamentController extends AppController
             'tournament' => $tournament,
             'players' => $players,
             'registrationState' => $this->registrationState($tournament, $players),
-            'rounds' => $this->groupByRound($this->tournaments->findMatches($tournament->id), $tournament->maxPlayers),
+            'canGenerateBracket' => $this->canGenerateBracket($tournament),
+            'rounds' => $this->groupByRound($this->tournaments->findMatches($tournament->id)),
         ]);
+    }
+
+    private function canGenerateBracket(Tournament $tournament): bool
+    {
+        $userId = $this->auth->userId();
+
+        return $userId !== null
+            && $this->auth->role() === UserRole::Organizer
+            && $this->brackets->canGenerate($tournament, $userId);
     }
 
     /**
@@ -303,9 +351,11 @@ final class TournamentController extends AppController
      * @param list<GameMatch> $matches
      * @return list<array{number: int, label: string, matches: list<GameMatch>}>
      */
-    private function groupByRound(array $matches, int $maxPlayers): array
+    private function groupByRound(array $matches): array
     {
-        $totalRounds = (int) log($maxPlayers, 2);
+        // Liczba rund wynika z wygenerowanej drabinki, a nie z limitu miejsc –
+        // przy wolnych losach drabinka może być mniejsza niż max_players.
+        $totalRounds = $matches === [] ? 0 : max(array_map(static fn (GameMatch $match): int => $match->round, $matches));
         $rounds = [];
 
         foreach ($matches as $match) {

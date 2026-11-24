@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Model\Bracket;
 use App\Model\GameMatch;
 use App\Model\NewTournament;
 use App\Model\Participant;
@@ -37,4 +38,10 @@ interface TournamentRepositoryInterface
 
     /** Dopisuje gracza do turnieju, pilnując limitu miejsc także przy równoczesnych zapisach. */
     public function addParticipant(int $tournamentId, int $userId): AddParticipantResult;
+
+    /**
+     * Zapisuje mecze drabinki i rozstawienie graczy, a turniej przechodzi w status ongoing.
+     * Zwraca false, gdy turniej nie jest już otwarty (np. drabinka powstała w międzyczasie).
+     */
+    public function saveBracket(int $tournamentId, Bracket $bracket): bool;
 }
