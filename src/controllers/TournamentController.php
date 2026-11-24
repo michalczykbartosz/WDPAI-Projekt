@@ -6,13 +6,18 @@ namespace App\Controller;
 
 use App\Model\FinishRule;
 use App\Model\GameMatch;
+use App\Model\Participant;
 use App\Model\Tournament;
 use App\Model\TournamentStatus;
 use App\Model\UserRole;
 use App\Repository\TournamentRepositoryInterface;
+use App\Security\AccessDecision;
 use App\Service\TournamentCreationService;
+use App\Service\TournamentRegistrationException;
+use App\Service\TournamentRegistrationService;
 use App\Service\TournamentValidator;
 use App\Service\ValidationException;
+use DateTimeImmutable;
 
 final class TournamentController extends AppController
 {
@@ -34,6 +39,7 @@ final class TournamentController extends AppController
     public function __construct(
         private readonly TournamentRepositoryInterface $tournaments,
         private readonly TournamentCreationService $creation,
+        private readonly TournamentRegistrationService $registrations,
     ) {
         parent::__construct();
     }
@@ -112,6 +118,49 @@ final class TournamentController extends AppController
     }
 
     /**
+     * Zapis zalogowanego gracza na turniej. Wywoływane przez Fetch API, zawsze odpowiada JSON-em.
+     */
+    public function register(string $id): void
+    {
+        $tournamentId = $this->parseId($id);
+
+        if ($tournamentId === null) {
+            $this->jsonError(400, 'bad_request', 'bad_request.message');
+            return;
+        }
+
+        $decision = $this->guard->check(UserRole::Player);
+
+        if ($decision === AccessDecision::Unauthenticated) {
+            $this->jsonError(401, 'unauthorized', 'registration.error.unauthorized');
+            return;
+        }
+
+        if ($decision === AccessDecision::Forbidden) {
+            $this->jsonError(403, 'forbidden', 'registration.error.forbidden');
+            return;
+        }
+
+        $userId = $this->auth->userId() ?? throw new \LogicException('Role guard passed without a logged-in user.');
+
+        try {
+            $tournament = $this->registrations->register($tournamentId, $userId);
+        } catch (TournamentRegistrationException $exception) {
+            $error = $exception->error;
+            $this->jsonError($error->httpStatus(), $error->value, 'registration.error.' . $error->value);
+            return;
+        }
+
+        $this->json([
+            'status' => 'registered',
+            'message' => $this->translator->get('registration.success'),
+            'registeredPlayers' => $tournament->registeredPlayers,
+            'maxPlayers' => $tournament->maxPlayers,
+            'player' => ['displayName' => $this->auth->displayName()],
+        ], 201);
+    }
+
+    /**
      * @param array<string, string> $errors
      * @param array<string, string> $old
      */
@@ -140,13 +189,42 @@ final class TournamentController extends AppController
             return;
         }
 
+        $players = $this->tournaments->findParticipants($tournament->id);
+
         $this->render('tournament-detail', [
             'pageTitle' => $this->translator->get('title.tournament', ['name' => $tournament->name]),
             'activePage' => 'tournaments',
             'tournament' => $tournament,
-            'players' => $this->tournaments->findParticipants($tournament->id),
+            'players' => $players,
+            'registrationState' => $this->registrationState($tournament, $players),
             'rounds' => $this->groupByRound($this->tournaments->findMatches($tournament->id), $tournament->maxPlayers),
         ]);
+    }
+
+    /**
+     * Stan przycisku zapisu: 'open', 'guest', kod błędu z TournamentRegistrationError
+     * albo null, gdy przycisku nie pokazujemy (organizator).
+     *
+     * @param list<Participant> $players
+     */
+    private function registrationState(Tournament $tournament, array $players): ?string
+    {
+        $userId = $this->auth->userId();
+
+        if ($userId !== null && $this->auth->role() !== UserRole::Player) {
+            return null;
+        }
+
+        $alreadyRegistered = $userId !== null
+            && in_array($userId, array_map(static fn (Participant $player): int => $player->userId, $players), true);
+
+        $error = $this->registrations->check($tournament, $alreadyRegistered, new DateTimeImmutable());
+
+        if ($error !== null) {
+            return $error->value;
+        }
+
+        return $userId === null ? 'guest' : 'open';
     }
 
     /**

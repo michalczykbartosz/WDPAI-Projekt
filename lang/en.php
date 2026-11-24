@@ -111,6 +111,18 @@ return [
     'tournament.register' => 'Register for tournament',
     'tournament.players' => 'Registered players',
     'tournament.no_players' => 'No registered players.',
+    'tournament.registering' => 'Registering…',
+    'tournament.registered_self' => 'You are registered',
+    'tournament.login_to_register' => 'Log in to register for this tournament',
+    'registration.success' => 'You have been registered for the tournament.',
+    'registration.error.not_found' => 'This tournament does not exist.',
+    'registration.error.registration_closed' => 'Registration for this tournament is closed.',
+    'registration.error.tournament_full' => 'There are no free places left in this tournament.',
+    'registration.error.already_registered' => 'You are already registered for this tournament.',
+    'registration.error.unauthorized' => 'Log in to register for the tournament.',
+    'registration.error.forbidden' => 'Only players can register for tournaments.',
+    'registration.error.network' => 'Could not reach the server. Please try again.',
+    'registration.error.unknown' => 'Something went wrong. Please try again.',
 
     // Bracket
     'bracket.title' => 'Tournament bracket (single elimination)',

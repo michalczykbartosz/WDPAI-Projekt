@@ -111,6 +111,18 @@ return [
     'tournament.register' => 'Zapisz się na turniej',
     'tournament.players' => 'Zapisani zawodnicy',
     'tournament.no_players' => 'Brak zapisanych zawodników.',
+    'tournament.registering' => 'Zapisywanie…',
+    'tournament.registered_self' => 'Jesteś zapisany',
+    'tournament.login_to_register' => 'Zaloguj się, aby zapisać się na turniej',
+    'registration.success' => 'Zapisano Cię na turniej.',
+    'registration.error.not_found' => 'Ten turniej nie istnieje.',
+    'registration.error.registration_closed' => 'Zapisy na ten turniej są zamknięte.',
+    'registration.error.tournament_full' => 'Brak wolnych miejsc w turnieju.',
+    'registration.error.already_registered' => 'Jesteś już zapisany na ten turniej.',
+    'registration.error.unauthorized' => 'Zaloguj się, aby zapisać się na turniej.',
+    'registration.error.forbidden' => 'Na turnieje mogą zapisywać się tylko zawodnicy.',
+    'registration.error.network' => 'Nie udało się połączyć z serwerem. Spróbuj ponownie.',
+    'registration.error.unknown' => 'Coś poszło nie tak. Spróbuj ponownie.',
 
     // Drabinka
     'bracket.title' => 'Drabinka turniejowa (Single Elimination)',

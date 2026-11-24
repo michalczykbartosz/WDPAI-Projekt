@@ -29,4 +29,9 @@ interface TournamentRepositoryInterface
     public function create(NewTournament $tournament, string $inviteCode): int;
 
     public function inviteCodeExists(string $inviteCode): bool;
+
+    public function isParticipant(int $tournamentId, int $userId): bool;
+
+    /** Dopisuje gracza do turnieju, pilnując limitu miejsc także przy równoczesnych zapisach. */
+    public function addParticipant(int $tournamentId, int $userId): AddParticipantResult;
 }

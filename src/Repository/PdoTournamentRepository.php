@@ -117,6 +117,51 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
         return (bool) $row['taken'];
     }
 
+    public function isParticipant(int $tournamentId, int $userId): bool
+    {
+        $row = $this->fetchOne(<<<'SQL'
+            SELECT EXISTS (
+                SELECT 1 FROM tournament_participants
+                WHERE tournament_id = :tournament_id AND user_id = :user_id
+            ) AS registered
+            SQL, ['tournament_id' => $tournamentId, 'user_id' => $userId]);
+
+        return (bool) $row['registered'];
+    }
+
+    public function addParticipant(int $tournamentId, int $userId): AddParticipantResult
+    {
+        return $this->transaction(function () use ($tournamentId, $userId): AddParticipantResult {
+            // FOR UPDATE blokuje wiersz turnieju do końca transakcji: drugi równoczesny zapis
+            // czeka tutaj i liczy uczestników dopiero po zatwierdzeniu pierwszego.
+            $tournament = $this->fetchOne(
+                'SELECT max_players FROM tournaments WHERE id = :id FOR UPDATE',
+                ['id' => $tournamentId],
+            );
+
+            $participants = $this->fetchOne(<<<'SQL'
+                SELECT count(*) AS registered, coalesce(bool_or(user_id = :user_id), false) AS already_registered
+                FROM tournament_participants
+                WHERE tournament_id = :tournament_id
+                SQL, ['tournament_id' => $tournamentId, 'user_id' => $userId]);
+
+            if ($participants['already_registered']) {
+                return AddParticipantResult::AlreadyRegistered;
+            }
+
+            if ((int) $participants['registered'] >= (int) $tournament['max_players']) {
+                return AddParticipantResult::Full;
+            }
+
+            $this->execute(
+                'INSERT INTO tournament_participants (tournament_id, user_id) VALUES (:tournament_id, :user_id)',
+                ['tournament_id' => $tournamentId, 'user_id' => $userId],
+            );
+
+            return AddParticipantResult::Added;
+        });
+    }
+
     private function findOneBy(string $condition, int|string $value): ?Tournament
     {
         $row = $this->fetchOne(

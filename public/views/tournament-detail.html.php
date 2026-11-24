@@ -17,38 +17,48 @@
             <dd><span class="badge badge--status-<?= $tournament->status->value ?>"><?= $t('status.' . $tournament->status->value) ?></span></dd>
 
             <dt><?= $t('tournament.registered') ?></dt>
-            <dd><?= $tournament->registeredPlayers ?> / <?= $tournament->maxPlayers ?></dd>
+            <dd><span id="registered-count"><?= $tournament->registeredPlayers ?></span> / <?= $tournament->maxPlayers ?></dd>
         </dl>
 
-        <button type="button" id="btn-register" class="btn btn--primary"><?= $t('tournament.register') ?></button>
+        <?php if ($registrationState === 'open'): ?>
+            <button type="button" id="btn-register" class="btn btn--primary"
+                    data-url="/tournaments/<?= $tournament->id ?>/register"
+                    data-label-loading="<?= $t('tournament.registering') ?>"
+                    data-label-done="<?= $t('tournament.registered_self') ?>"
+                    data-error-network="<?= $t('registration.error.network') ?>"
+                    data-error-unknown="<?= $t('registration.error.unknown') ?>"><?= $t('tournament.register') ?></button>
+        <?php elseif ($registrationState === 'already_registered'): ?>
+            <button type="button" class="btn btn--primary" disabled><?= $t('tournament.registered_self') ?></button>
+        <?php elseif ($registrationState === 'guest'): ?>
+            <p><a href="/login"><?= $t('tournament.login_to_register') ?></a></p>
+        <?php elseif ($registrationState !== null): ?>
+            <p class="text-muted"><?= $t('registration.error.' . $registrationState) ?></p>
+        <?php endif; ?>
         <p id="register-feedback" role="status"></p>
     </section>
 </article>
 
 <section>
     <h2><?= $t('tournament.players') ?></h2>
-    <?php if (!empty($players)): ?>
-        <table>
-            <thead>
+    <table id="players-table"<?= empty($players) ? ' hidden' : '' ?>>
+        <thead>
+            <tr>
+                <th scope="col"><?= $t('stats.rank') ?></th>
+                <th scope="col"><?= $t('stats.player') ?></th>
+                <th scope="col"><?= $t('stats.avg3') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($players as $p): ?>
                 <tr>
-                    <th scope="col"><?= $t('stats.rank') ?></th>
-                    <th scope="col"><?= $t('stats.player') ?></th>
-                    <th scope="col"><?= $t('stats.avg3') ?></th>
+                    <td class="rank-cell"><?= $p->seed ?? '–' ?></td>
+                    <td><?= htmlspecialchars($p->displayName) ?></td>
+                    <td><?= $p->threeDartAverage !== null ? number_format($p->threeDartAverage, 1) : '–' ?></td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($players as $p): ?>
-                    <tr>
-                        <td class="rank-cell"><?= $p->seed ?? '–' ?></td>
-                        <td><?= htmlspecialchars($p->displayName) ?></td>
-                        <td><?= $p->threeDartAverage !== null ? number_format($p->threeDartAverage, 1) : '–' ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p><?= $t('tournament.no_players') ?></p>
-    <?php endif; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    <p id="players-empty"<?= empty($players) ? '' : ' hidden' ?>><?= $t('tournament.no_players') ?></p>
 </section>
 
 <section>
@@ -105,3 +115,5 @@
         <p id="result-feedback" role="status"></p>
     </form>
 </section>
+
+<script type="module" src="/js/tournament-registration.js"></script>

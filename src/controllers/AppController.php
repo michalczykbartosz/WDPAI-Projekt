@@ -44,6 +44,11 @@ abstract class AppController
 
     public function forbidden(): void
     {
+        if ($this->wantsJson()) {
+            $this->jsonError(403, 'forbidden', 'forbidden.message');
+            return;
+        }
+
         $this->renderError(403, 'forbidden');
     }
 
@@ -77,6 +82,33 @@ abstract class AppController
         }
 
         return true;
+    }
+
+    /** @param array<string, mixed> $data */
+    protected function json(array $data, int $statusCode = 200): void
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json; charset=UTF-8');
+        header('Cache-Control: no-store');
+
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Błąd dla żądań Fetch: kod błędu dla JavaScriptu i przetłumaczony komunikat dla użytkownika.
+     */
+    protected function jsonError(int $statusCode, string $errorCode, string $messageKey): void
+    {
+        $this->json([
+            'error' => $errorCode,
+            'message' => $this->translator->get($messageKey),
+        ], $statusCode);
+    }
+
+    /** Żądania Fetch wysyłają nagłówek Accept: application/json. */
+    protected function wantsJson(): bool
+    {
+        return str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json');
     }
 
     protected function redirect(string $path): void

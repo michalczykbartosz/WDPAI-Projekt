@@ -24,6 +24,7 @@ $routing->get('/', DefaultController::class, 'index');
 $routing->get('/tournaments', TournamentController::class, 'index');
 $routing->get('/tournaments/{id}', TournamentController::class, 'show');
 $routing->get('/tournaments/code/{code:[A-Z0-9]{6}}', TournamentController::class, 'showByCode');
+$routing->post('/tournaments/{id}/register', TournamentController::class, 'register');
 $routing->get('/organizer/create', TournamentController::class, 'create');
 $routing->post('/organizer/create', TournamentController::class, 'store');
 

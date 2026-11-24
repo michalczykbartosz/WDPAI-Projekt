@@ -23,6 +23,7 @@ use App\Service\LoginService;
 use App\Service\RegistrationService;
 use App\Service\RegistrationValidator;
 use App\Service\TournamentCreationService;
+use App\Service\TournamentRegistrationService;
 use App\Service\TournamentValidator;
 
 final class Container
@@ -41,6 +42,7 @@ final class Container
             TournamentController::class => new TournamentController(
                 $this->tournamentRepository(),
                 new TournamentCreationService(new TournamentValidator(), $this->tournamentRepository()),
+                new TournamentRegistrationService($this->tournamentRepository()),
             ),
             PlayerController::class => new PlayerController($this->playerRepository()),
             AuthController::class => new AuthController(

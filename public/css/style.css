@@ -875,6 +875,21 @@ dd {
     margin-top: var(--space-sm);
 }
 
+.register-feedback--success { color: var(--color-success); }
+.register-feedback--error   { color: var(--color-danger); }
+
+.btn:disabled,
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn[aria-busy="true"] {
+    cursor: progress;
+}
+
 
 /* Stany interakcji: :hover i :focus-visible */
 a:hover {
