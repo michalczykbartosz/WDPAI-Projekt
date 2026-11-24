@@ -100,6 +100,11 @@ return [
     'filter.status' => 'Status:',
     'filter.all' => 'Wszystkie',
     'filter.submit' => 'Filtruj',
+    'filter.search' => 'Szukaj (nazwa lub miejsce):',
+    'filter.search_placeholder' => 'np. Kraków',
+    'filter.loading' => 'Wczytywanie…',
+    'filter.results' => 'Liczba wyników: {count}',
+    'filter.load_error' => 'Nie udało się wczytać turniejów. Spróbuj ponownie.',
 
     // Szczegóły turnieju
     'tournament.info' => 'Informacje o turnieju',

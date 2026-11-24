@@ -12,8 +12,11 @@ use App\Model\TournamentStatus;
 
 interface TournamentRepositoryInterface
 {
-    /** @return list<Tournament> */
-    public function findPublished(?TournamentStatus $status = null, ?int $startingScore = null): array;
+    /**
+     * @param string|null $search fragment nazwy albo lokalizacji (bez rozróżniania wielkości liter)
+     * @return list<Tournament>
+     */
+    public function findPublished(?TournamentStatus $status = null, ?int $startingScore = null, ?string $search = null): array;
 
     public function findById(int $id): ?Tournament;
 

@@ -44,11 +44,6 @@ abstract class AppController
 
     public function forbidden(): void
     {
-        if ($this->wantsJson()) {
-            $this->jsonError(403, 'forbidden', 'forbidden.message');
-            return;
-        }
-
         $this->renderError(403, 'forbidden');
     }
 
@@ -202,6 +197,12 @@ abstract class AppController
     /** @param list<array{url: string, label: string}> $extraLinks */
     private function renderError(int $statusCode, string $errorKey, array $extraLinks = []): void
     {
+        // Żądania Fetch dostają błąd jako JSON, a nie stronę HTML
+        if ($this->wantsJson()) {
+            $this->jsonError($statusCode, $errorKey, $errorKey . '.message');
+            return;
+        }
+
         http_response_code($statusCode);
 
         $this->render('error', [

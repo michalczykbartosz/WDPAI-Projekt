@@ -22,6 +22,7 @@ use DateTimeImmutable;
 final class TournamentController extends AppController
 {
     private const PUBLIC_STATUSES = [TournamentStatus::Open, TournamentStatus::Ongoing, TournamentStatus::Finished];
+    private const SEARCH_MAX_LENGTH = 100;
 
     /** Wartości startowe pustego formularza tworzenia turnieju. */
     private const CREATE_FORM_DEFAULTS = [
@@ -48,20 +49,34 @@ final class TournamentController extends AppController
     {
         $status = $this->parseStatusFilter($_GET['status'] ?? '');
         $startingScore = $this->parseFormatFilter($_GET['format'] ?? '');
+        $search = $this->parseSearchFilter($_GET['q'] ?? '');
 
-        if ($status === false || $startingScore === false) {
+        if ($status === false || $startingScore === false || $search === false) {
             $this->badRequest();
+            return;
+        }
+
+        $tournaments = $this->tournaments->findPublished($status, $startingScore, $search);
+
+        // Filtrowanie na żywo (Fetch API) dostaje same dane, zwykłe wejście – całą stronę
+        if ($this->wantsJson()) {
+            $this->json([
+                'count' => count($tournaments),
+                'tournaments' => array_map($this->tournamentToArray(...), $tournaments),
+            ]);
             return;
         }
 
         $this->render('tournaments', [
             'pageTitle' => $this->translator->get('title.tournaments'),
             'activePage' => 'tournaments',
-            'tournaments' => $this->tournaments->findPublished($status, $startingScore),
+            'tournaments' => $tournaments,
             'statusOptions' => self::PUBLIC_STATUSES,
             'formatOptions' => Tournament::STARTING_SCORES,
             'selectedStatus' => $status?->value ?? '',
             'selectedFormat' => $startingScore !== null ? (string) $startingScore : '',
+            'search' => $search ?? '',
+            'searchMaxLength' => self::SEARCH_MAX_LENGTH,
         ]);
     }
 
@@ -239,6 +254,38 @@ final class TournamentController extends AppController
         $status = is_string($value) ? TournamentStatus::tryFrom($value) : null;
 
         return in_array($status, self::PUBLIC_STATUSES, true) ? $status : false;
+    }
+
+    private function parseSearchFilter(mixed $value): string|null|false
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+
+        $search = trim($value);
+
+        if ($search === '') {
+            return null;
+        }
+
+        return mb_strlen($search) <= self::SEARCH_MAX_LENGTH ? $search : false;
+    }
+
+    /** @return array<string, int|string> */
+    private function tournamentToArray(Tournament $tournament): array
+    {
+        return [
+            'id' => $tournament->id,
+            'url' => '/tournaments/' . $tournament->id,
+            'name' => $tournament->name,
+            'format' => $tournament->format(),
+            'date' => $tournament->startsAt->format('Y-m-d'),
+            'location' => $tournament->location,
+            'registeredPlayers' => $tournament->registeredPlayers,
+            'maxPlayers' => $tournament->maxPlayers,
+            'status' => $tournament->status->value,
+            'statusLabel' => $this->translator->get('status.' . $tournament->status->value),
+        ];
     }
 
     private function parseFormatFilter(mixed $value): int|null|false

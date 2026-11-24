@@ -100,6 +100,11 @@ return [
     'filter.status' => 'Status:',
     'filter.all' => 'All',
     'filter.submit' => 'Filter',
+    'filter.search' => 'Search (name or location):',
+    'filter.search_placeholder' => 'e.g. Krakow',
+    'filter.loading' => 'Loading…',
+    'filter.results' => 'Results: {count}',
+    'filter.load_error' => 'Could not load tournaments. Please try again.',
 
     // Tournament details
     'tournament.info' => 'Tournament information',
