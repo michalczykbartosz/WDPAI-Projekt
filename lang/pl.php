@@ -160,7 +160,7 @@ return [
     'result.saved_final' => 'Wynik finału zapisany – turniej jest zakończony.',
     'result.error.validation' => 'Popraw zaznaczone pola.',
     'result.error.not_found' => 'Ten mecz nie istnieje.',
-    'result.error.forbidden' => 'Nie możesz wpisać wyniku tego meczu.',
+    'result.error.forbidden' => 'Wynik może wpisać tylko organizator turnieju albo gracz tego meczu.',
     'result.error.not_playable' => 'Ten mecz ma już wynik albo nie są jeszcze znani obaj gracze.',
     'result.error.unauthorized' => 'Zaloguj się, aby wpisać wynik.',
     'result.error.network' => 'Nie udało się połączyć z serwerem. Spróbuj ponownie.',

@@ -160,7 +160,7 @@ return [
     'result.saved_final' => 'Final result saved – the tournament is finished.',
     'result.error.validation' => 'Please correct the highlighted fields.',
     'result.error.not_found' => 'This match does not exist.',
-    'result.error.forbidden' => 'You cannot enter the result of this match.',
+    'result.error.forbidden' => 'Only the tournament organizer or a player of this match can enter its result.',
     'result.error.not_playable' => 'This match already has a result or its players are not known yet.',
     'result.error.unauthorized' => 'Log in to enter a result.',
     'result.error.network' => 'Could not reach the server. Please try again.',

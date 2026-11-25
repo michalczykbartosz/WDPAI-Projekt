@@ -70,10 +70,16 @@ final class MatchResultService
         };
     }
 
-    /** Wynik wpisuje organizator turnieju. */
+    /**
+     * Wynik wpisuje organizator tego turnieju albo jeden z dwóch graczy tego meczu.
+     * Inny gracz (także z tego samego turnieju) dostaje 403.
+     */
     private function mayEnterResult(GameMatch $match, Tournament $tournament, int $userId, UserRole $role): bool
     {
-        return $role === UserRole::Organizer && $tournament->isOwnedBy($userId);
+        return match ($role) {
+            UserRole::Organizer => $tournament->isOwnedBy($userId),
+            UserRole::Player => $match->hasPlayer($userId),
+        };
     }
 
     /** Mecz czeka na wynik: turniej trwa, znamy obu graczy i nie ma jeszcze wyniku. */
