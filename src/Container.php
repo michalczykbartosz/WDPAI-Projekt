@@ -7,6 +7,7 @@ namespace App;
 use App\Controller\AppController;
 use App\Controller\AuthController;
 use App\Controller\DefaultController;
+use App\Controller\MatchController;
 use App\Controller\PlayerController;
 use App\Controller\TournamentController;
 use App\Database\Database;
@@ -22,6 +23,8 @@ use App\Security\SessionManager;
 use App\Service\BracketGenerator;
 use App\Service\BracketService;
 use App\Service\LoginService;
+use App\Service\MatchResultService;
+use App\Service\MatchScoreValidator;
 use App\Service\RegistrationService;
 use App\Service\RegistrationValidator;
 use App\Service\TournamentCreationService;
@@ -46,7 +49,9 @@ final class Container
                 new TournamentCreationService(new TournamentValidator(), $this->tournamentRepository()),
                 new TournamentRegistrationService($this->tournamentRepository()),
                 new BracketService(new BracketGenerator(), $this->tournamentRepository()),
+                $this->matchResultService(),
             ),
+            MatchController::class => new MatchController($this->matchResultService()),
             PlayerController::class => new PlayerController($this->playerRepository()),
             AuthController::class => new AuthController(
                 new RegistrationService(new RegistrationValidator(), $this->userRepository()),
@@ -64,6 +69,11 @@ final class Container
     public function csrf(): CsrfTokenManager
     {
         return new CsrfTokenManager($this->session());
+    }
+
+    private function matchResultService(): MatchResultService
+    {
+        return new MatchResultService(new MatchScoreValidator(), $this->tournamentRepository());
     }
 
     private function tournamentRepository(): TournamentRepositoryInterface

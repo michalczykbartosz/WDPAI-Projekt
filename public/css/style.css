@@ -875,6 +875,37 @@ dd {
     margin-top: var(--space-sm);
 }
 
+.result-dialog {
+    width: min(560px, calc(100% - 2 * var(--space-lg)));
+    max-height: calc(100vh - 2 * var(--space-lg));
+    overflow-y: auto;
+    padding: var(--space-xl);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+}
+
+.result-dialog::backdrop {
+    background: rgb(0 0 0 / 0.6);
+}
+
+.dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+.form-hint {
+    margin-top: var(--space-xs);
+    font-size: var(--text-sm);
+}
+
+.bracket__result-button {
+    margin-top: var(--space-sm);
+}
+
 .register-feedback--success { color: var(--color-success); }
 .register-feedback--error   { color: var(--color-danger); }
 

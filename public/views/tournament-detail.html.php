@@ -86,41 +86,50 @@
     <?php endif; ?>
 </section>
 
-<section>
-    <h2><?= $t('result.title') ?></h2>
-    <form id="match-result-form" class="card">
-        <?php require __DIR__ . '/partials/csrf-field.html.php'; ?>
-        <input type="hidden" name="tournament_id" value="<?= $tournament->id ?>">
+<?php if ($tournament->status === \App\Model\TournamentStatus::Ongoing): ?>
+    <dialog id="result-dialog" class="result-dialog" aria-labelledby="result-dialog-title"
+            data-label-saving="<?= $t('result.saving') ?>"
+            data-error-network="<?= $t('result.error.network') ?>"
+            data-error-unknown="<?= $t('result.error.unknown') ?>">
+        <form id="result-form" novalidate>
+            <h2 id="result-dialog-title"><?= $t('result.title') ?></h2>
+            <p class="text-muted"><?= $t('result.legs_to_win', ['legs' => $tournament->legsToWin]) ?></p>
+            <p class="form-error" id="result-error" role="alert" tabindex="-1" hidden></p>
 
-        <label for="match_id"><?= $t('result.match_id') ?></label>
-        <input type="number" id="match_id" name="match_id" required min="1">
+            <?php foreach ([1, 2] as $player): ?>
+                <fieldset>
+                    <legend data-player-name="<?= $player ?>"></legend>
 
-        <fieldset>
-            <legend><?= $t('result.legs') ?></legend>
-            <label for="score1"><?= $t('result.legs_player1') ?></label>
-            <input type="number" id="score1" name="score1" required min="0" max="10">
+                    <label for="score<?= $player ?>"><?= $t('result.legs') ?></label>
+                    <select id="score<?= $player ?>" name="score<?= $player ?>" required>
+                        <option value="">—</option>
+                        <?php for ($legs = 0; $legs <= $tournament->legsToWin; $legs++): ?>
+                            <option value="<?= $legs ?>"><?= $legs ?></option>
+                        <?php endfor; ?>
+                    </select>
 
-            <label for="score2"><?= $t('result.legs_player2') ?></label>
-            <input type="number" id="score2" name="score2" required min="0" max="10">
-        </fieldset>
+                    <label for="avg<?= $player ?>"><?= $t('result.avg3') ?></label>
+                    <input type="text" inputmode="decimal" id="avg<?= $player ?>" name="avg<?= $player ?>" required
+                           autocomplete="off" placeholder="<?= $t('result.avg_placeholder') ?>">
 
-        <?php foreach ([1, 2] as $playerNumber): ?>
-            <fieldset>
-                <legend><?= $t('result.stats_player' . $playerNumber) ?></legend>
-                <label for="avg<?= $playerNumber ?>"><?= $t('result.avg3') ?></label>
-                <input type="number" id="avg<?= $playerNumber ?>" name="avg<?= $playerNumber ?>" step="0.1" min="0" max="180">
+                    <label for="max180_<?= $player ?>"><?= $t('result.180s') ?></label>
+                    <input type="number" id="max180_<?= $player ?>" name="max180_<?= $player ?>" min="0" max="99" value="0">
 
-                <label for="max180_<?= $playerNumber ?>"><?= $t('result.180s') ?></label>
-                <input type="number" id="max180_<?= $playerNumber ?>" name="max180_<?= $playerNumber ?>" min="0">
+                    <label for="checkout<?= $player ?>"><?= $t('result.checkout') ?></label>
+                    <input type="number" id="checkout<?= $player ?>" name="checkout<?= $player ?>"
+                           min="<?= $tournament->finishRule->minCheckout() ?>" max="<?= $tournament->finishRule->maxCheckout() ?>"
+                           aria-describedby="checkout<?= $player ?>-hint">
+                    <p class="text-muted form-hint" id="checkout<?= $player ?>-hint"><?= $t('result.checkout_hint') ?></p>
+                </fieldset>
+            <?php endforeach; ?>
 
-                <label for="checkout<?= $playerNumber ?>"><?= $t('result.checkout') ?></label>
-                <input type="number" id="checkout<?= $playerNumber ?>" name="checkout<?= $playerNumber ?>" min="1" max="170">
-            </fieldset>
-        <?php endforeach; ?>
-
-        <button type="submit"><?= $t('result.submit') ?></button>
-        <p id="result-feedback" role="status"></p>
-    </form>
-</section>
+            <div class="dialog__actions">
+                <button type="button" class="btn btn--secondary" data-close><?= $t('result.cancel') ?></button>
+                <button type="submit" class="btn btn--primary"><?= $t('result.submit') ?></button>
+            </div>
+        </form>
+    </dialog>
+    <script type="module" src="/js/match-result.js"></script>
+<?php endif; ?>
 
 <script type="module" src="/js/tournament-registration.js"></script>

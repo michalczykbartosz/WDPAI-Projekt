@@ -15,6 +15,7 @@ use App\Security\AccessDecision;
 use App\Service\BracketGenerationError;
 use App\Service\BracketGenerationException;
 use App\Service\BracketService;
+use App\Service\MatchResultService;
 use App\Service\TournamentCreationService;
 use App\Service\TournamentRegistrationException;
 use App\Service\TournamentRegistrationService;
@@ -45,6 +46,7 @@ final class TournamentController extends AppController
         private readonly TournamentCreationService $creation,
         private readonly TournamentRegistrationService $registrations,
         private readonly BracketService $brackets,
+        private readonly MatchResultService $results,
     ) {
         parent::__construct();
     }
@@ -251,6 +253,12 @@ final class TournamentController extends AppController
             'players' => $players,
             'registrationState' => $this->registrationState($tournament, $players),
             'canGenerateBracket' => $this->canGenerateBracket($tournament),
+            'canEnterResult' => fn (GameMatch $match): bool => $this->results->canSubmit(
+                $match,
+                $tournament,
+                $this->auth->userId(),
+                $this->auth->role(),
+            ),
             'rounds' => $this->groupByRound($this->tournaments->findMatches($tournament->id)),
         ]);
     }

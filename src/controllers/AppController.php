@@ -100,6 +100,19 @@ abstract class AppController
         ], $statusCode);
     }
 
+    /**
+     * Treść żądania wysłanego przez Fetch API jako JSON. Niepoprawny JSON
+     * traktujemy jak pusty obiekt – brakujące pola wyłapie walidacja.
+     *
+     * @return array<string, mixed>
+     */
+    protected function jsonInput(): array
+    {
+        $data = json_decode((string) file_get_contents('php://input'), true, 4);
+
+        return is_array($data) ? $data : [];
+    }
+
     /** Żądania Fetch wysyłają nagłówek Accept: application/json. */
     protected function wantsJson(): bool
     {

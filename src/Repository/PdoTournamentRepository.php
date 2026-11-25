@@ -7,8 +7,10 @@ namespace App\Repository;
 use App\Model\Bracket;
 use App\Model\FinishRule;
 use App\Model\GameMatch;
+use App\Model\MatchResult;
 use App\Model\MatchStatus;
 use App\Model\NewTournament;
+use App\Model\PlayerMatchStats;
 use App\Model\Participant;
 use App\Model\Tournament;
 use App\Model\TournamentStatus;
@@ -72,18 +74,115 @@ final class PdoTournamentRepository extends PdoRepository implements TournamentR
         return array_map($this->mapParticipant(...), $rows);
     }
 
+    private const SELECT_MATCH = <<<'SQL'
+        SELECT m.*, p1.display_name AS player1_name, p2.display_name AS player2_name
+        FROM matches m
+        LEFT JOIN player_profiles p1 ON p1.user_id = m.player1_id
+        LEFT JOIN player_profiles p2 ON p2.user_id = m.player2_id
+        SQL;
+
     public function findMatches(int $tournamentId): array
     {
-        $rows = $this->fetchAll(<<<'SQL'
-            SELECT m.*, p1.display_name AS player1_name, p2.display_name AS player2_name
-            FROM matches m
-            LEFT JOIN player_profiles p1 ON p1.user_id = m.player1_id
-            LEFT JOIN player_profiles p2 ON p2.user_id = m.player2_id
-            WHERE m.tournament_id = :tournament_id
-            ORDER BY m.round, m.position
-            SQL, ['tournament_id' => $tournamentId]);
+        $rows = $this->fetchAll(
+            self::SELECT_MATCH . ' WHERE m.tournament_id = :tournament_id ORDER BY m.round, m.position',
+            ['tournament_id' => $tournamentId],
+        );
 
         return array_map($this->mapMatch(...), $rows);
+    }
+
+    public function findMatch(int $matchId): ?GameMatch
+    {
+        $row = $this->fetchOne(self::SELECT_MATCH . ' WHERE m.id = :id', ['id' => $matchId]);
+
+        return $row === null ? null : $this->mapMatch($row);
+    }
+
+    public function saveMatchResult(int $matchId, MatchResult $result): SaveMatchResultOutcome
+    {
+        return $this->transaction(function () use ($matchId, $result): SaveMatchResultOutcome {
+            // Blokada meczu: dwa równoczesne zapisy tego samego wyniku nie przejdą oba
+            $match = $this->fetchOne(
+                'SELECT tournament_id, round, position, player1_id, player2_id, status FROM matches WHERE id = :id FOR UPDATE',
+                ['id' => $matchId],
+            );
+
+            if (
+                $match === null
+                || $match['status'] !== MatchStatus::Pending->value
+                || $match['player1_id'] === null
+                || $match['player2_id'] === null
+            ) {
+                return SaveMatchResultOutcome::NotPlayable;
+            }
+
+            $player1Id = (int) $match['player1_id'];
+            $player2Id = (int) $match['player2_id'];
+            $winnerId = $result->player1Won() ? $player1Id : $player2Id;
+
+            $this->execute(<<<'SQL'
+                UPDATE matches
+                SET player1_legs = :player1_legs, player2_legs = :player2_legs, winner_id = :winner_id,
+                    status = 'finished', played_at = now()
+                WHERE id = :id
+                SQL, [
+                'player1_legs' => $result->player1Legs,
+                'player2_legs' => $result->player2Legs,
+                'winner_id' => $winnerId,
+                'id' => $matchId,
+            ]);
+
+            $this->insertStats($matchId, $player1Id, $result->player1Stats);
+            $this->insertStats($matchId, $player2Id, $result->player2Stats);
+
+            return $this->advanceWinner(
+                (int) $match['tournament_id'],
+                (int) $match['round'],
+                (int) $match['position'],
+                $winnerId,
+            );
+        });
+    }
+
+    private function insertStats(int $matchId, int $userId, PlayerMatchStats $stats): void
+    {
+        $this->execute(<<<'SQL'
+            INSERT INTO match_statistics (match_id, user_id, three_dart_average, count_180s, highest_checkout)
+            VALUES (:match_id, :user_id, :average, :count_180s, :highest_checkout)
+            SQL, [
+            'match_id' => $matchId,
+            'user_id' => $userId,
+            'average' => number_format($stats->threeDartAverage, 2, '.', ''),
+            'count_180s' => $stats->count180s,
+            'highest_checkout' => $stats->highestCheckout,
+        ]);
+    }
+
+    /**
+     * Zwycięzca meczu z pozycji p trafia do meczu ceil(p / 2) w następnej rundzie:
+     * z nieparzystej pozycji jako gracz 1, z parzystej jako gracz 2. Bez następnej
+     * rundy był to finał – turniej się kończy.
+     */
+    private function advanceWinner(int $tournamentId, int $round, int $position, int $winnerId): SaveMatchResultOutcome
+    {
+        $next = $this->fetchOne(
+            'SELECT id FROM matches WHERE tournament_id = :tournament_id AND round = :round AND position = :position FOR UPDATE',
+            ['tournament_id' => $tournamentId, 'round' => $round + 1, 'position' => intdiv($position + 1, 2)],
+        );
+
+        if ($next === null) {
+            $this->execute("UPDATE tournaments SET status = 'finished' WHERE id = :id", ['id' => $tournamentId]);
+
+            return SaveMatchResultOutcome::TournamentFinished;
+        }
+
+        $sql = $position % 2 === 1
+            ? 'UPDATE matches SET player1_id = :winner_id WHERE id = :id'
+            : 'UPDATE matches SET player2_id = :winner_id WHERE id = :id';
+
+        $this->execute($sql, ['winner_id' => $winnerId, 'id' => (int) $next['id']]);
+
+        return SaveMatchResultOutcome::Saved;
     }
 
     public function create(NewTournament $tournament, string $inviteCode): int

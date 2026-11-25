@@ -13,4 +13,10 @@ $emptySlot = $match->isBye() ? $t('bracket.bye') : $t('bracket.tbd');
         <strong><?= $match->player2Name !== null ? htmlspecialchars($match->player2Name) : $emptySlot ?></strong>
     </p>
     <p><em><?= $match->isBye() ? $t('bracket.bye_advance') : $t('match.status.' . $match->status->value) ?></em></p>
+    <?php if ($canEnterResult($match)): ?>
+        <button type="button" class="btn btn--secondary bracket__result-button"
+                data-result-match="<?= $match->id ?>"
+                data-player1="<?= htmlspecialchars((string) $match->player1Name) ?>"
+                data-player2="<?= htmlspecialchars((string) $match->player2Name) ?>"><?= $t('result.enter') ?></button>
+    <?php endif; ?>
 </article>

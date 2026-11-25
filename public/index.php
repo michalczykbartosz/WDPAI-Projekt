@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Controller\AuthController;
 use App\Controller\DefaultController;
 use App\Controller\LanguageController;
+use App\Controller\MatchController;
 use App\Controller\PlayerController;
 use App\Controller\TournamentController;
 use App\Container;
@@ -26,6 +27,7 @@ $routing->get('/tournaments/{id}', TournamentController::class, 'show');
 $routing->get('/tournaments/code/{code:[A-Z0-9]{6}}', TournamentController::class, 'showByCode');
 $routing->post('/tournaments/{id}/register', TournamentController::class, 'register');
 $routing->post('/tournaments/{id}/bracket', TournamentController::class, 'generateBracket');
+$routing->post('/matches/{id}/result', MatchController::class, 'submitResult');
 $routing->get('/organizer/create', TournamentController::class, 'create');
 $routing->post('/organizer/create', TournamentController::class, 'store');
 

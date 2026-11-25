@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Model\Bracket;
 use App\Model\GameMatch;
+use App\Model\MatchResult;
 use App\Model\NewTournament;
 use App\Model\Participant;
 use App\Model\Tournament;
@@ -44,4 +45,12 @@ interface TournamentRepositoryInterface
      * Zwraca false, gdy turniej nie jest już otwarty (np. drabinka powstała w międzyczasie).
      */
     public function saveBracket(int $tournamentId, Bracket $bracket): bool;
+
+    public function findMatch(int $matchId): ?GameMatch;
+
+    /**
+     * W jednej transakcji zapisuje wynik i statystyki obu graczy, a zwycięzcę przenosi
+     * do następnej rundy (po finale turniej dostaje status finished).
+     */
+    public function saveMatchResult(int $matchId, MatchResult $result): SaveMatchResultOutcome;
 }
